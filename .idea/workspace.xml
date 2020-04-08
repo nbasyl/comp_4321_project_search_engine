@@ -12,6 +12,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -249,10 +252,10 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="341" y="164" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1586333750966" />
-    <state x="517" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1586330623040">
+    <state x="517" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1586337963985">
       <screen x="0" y="23" width="1680" height="976" />
     </state>
-    <state x="517" y="343" key="com.intellij.ide.util.TipDialog/0.23.1680.976@0.23.1680.976" timestamp="1586330623040" />
+    <state x="517" y="343" key="com.intellij.ide.util.TipDialog/0.23.1680.976@0.23.1680.976" timestamp="1586337963985" />
     <state x="217" y="215" key="new project wizard" timestamp="1586334542425">
       <screen x="0" y="23" width="1680" height="976" />
     </state>
