@@ -1,4 +1,4 @@
-package web.useraction.Crawler;
+package webCrawler;
 
 import java.util.Vector;
 import org.htmlparser.beans.StringBean;
