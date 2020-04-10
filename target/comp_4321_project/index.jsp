@@ -14,6 +14,10 @@
     <h3>
         <a href="hello?name=Eric">Click Here</a>
     </h3>
+    <h2>Web Crawler Testing</h2>
+    <h3>
+        <a href="crawling">Start Crawling HKUST CSE Website</a>
+    </h3>
 </center>
 </body>
 </html>
