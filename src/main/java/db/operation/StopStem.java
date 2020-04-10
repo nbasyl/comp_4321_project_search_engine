@@ -17,7 +17,7 @@ public class StopStem
     {
         return stopWords.contains(str);
     }
-    public StopStem(String str)
+    public StopStem()
     {
         super();
         porter = new Porter();
@@ -30,7 +30,9 @@ public class StopStem
         // stopWords.add("were");
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(str));
+            System.out.println(new File("/").getAbsolutePath());
+            InputStream is = StopStem.class.getResourceAsStream("/stopwords.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
                 stopWords.add(line);
