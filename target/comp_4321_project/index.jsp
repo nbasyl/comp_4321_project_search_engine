@@ -8,19 +8,50 @@
     <title>Spring 4 MVC - HelloWorld Index Page</title>
     <script src="https://code.jquery.com/jquery-1.10.2.js",type="text/javascript"></script>
     <script>
+        function append_item_to_list(list_id, value, value2 = -1) {
+            if (value2 != -1) {
+                var node = document.createElement("LI");
+                var textnode = document.createTextNode(value+" frquency: "+value2);
+                node.appendChild(textnode);
+                document.getElementById(list_id).appendChild(node);
+            }else{
+                var node = document.createElement("LI");
+                var textnode = document.createTextNode(value);
+                node.appendChild(textnode);
+                document.getElementById(list_id).appendChild(node);
+            }
+        }
+        function append_item_to_id(id, value) {
+            var textnode = document.createTextNode(value);
+            document.getElementById(id).appendChild(textnode);
+        }
         function submit_url(){
-            console.log("??");
             $.ajax({
                 url : 'GetUserQueryServlet',
                 data : {
                     web_url : $('#web_url').val()
                 },
-                success : function(responseText) {
-                    $('#ajaxGetUserQueryServletResponse').text(responseText);
+                success : function(responseJson) {
+                    var words_key = responseJson.words_key;
+                    var words_count = responseJson.words_count;
+                    var links = responseJson.links_list;
+                    var title = responseJson.page_title;
+                    var size  = responseJson.page_size;
+                    var page_url = responseJson.page_url;
+                    console.log(responseJson.words);
+                    for (i=0;i<words_key.length;i++){
+                        append_item_to_list("search_words_list", words_key[i],words_count[i]);
+                    }
+                    for (i=0;i<links.length;i++){
+                        append_item_to_list("search_links_list", links[i])
+                    }
+                    append_item_to_id("search_page_title",title);
+                    append_item_to_id("search_page_url",page_url);
+                    append_item_to_id("search_page_size",size);
+                    // $('#ajaxGetUserQueryServletResponse').text(responseText);
                 }
             });
         }
-        console.log("87??");
     </script>
 </head>
 <body>
@@ -40,11 +71,21 @@
     </form> <br>
     <button id="submit" onclick="submit_url()">submit</button>
     </div>
+    <h2>Crawling result</h2>:
+    <h3>Title</h3>
+    <h2 id="search_page_title"></h2>
+    <h3>Page url</h3>
+    <h2 id="search_page_url"></h2>
+    <h3>Page Size</h3>
+    <h2 id="search_page_size"></h2>
+    <h3>All the words</h3>
+    <ul id="search_words_list">
+    </ul>
     <br>
-    <br>
-    <strong>Crawling result</strong>:
-    <div id="ajaxGetUserQueryServletResponse">
-    </div>
+    <h3>All the links</h3>
+    <ul id="search_links_list">
+    </ul>
+
 </center>
 </body>
 </html>
