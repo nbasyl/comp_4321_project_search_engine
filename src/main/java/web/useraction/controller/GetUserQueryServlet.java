@@ -81,7 +81,6 @@ public class GetUserQueryServlet extends HttpServlet {
 
         /* construct your json */
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("words", key_words_freq);
         jsonResponse.put("words_key", words_key);
         jsonResponse.put("words_count", words_count);
         jsonResponse.put("links_list", links);
