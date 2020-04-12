@@ -11,7 +11,7 @@ public class InvertedIndex
     private RocksDB db;
     private Options options;
 
-    InvertedIndex(String dbPath) throws RocksDBException
+    public InvertedIndex(String dbPath) throws RocksDBException
     {
         // the Options class contains a set of configurable DB options
         // that determines the behaviour of the database.
@@ -22,23 +22,33 @@ public class InvertedIndex
         this.db = RocksDB.open(options, dbPath);
     }
 
-    public void addEntry(String word, int x, int y) throws RocksDBException
+    public void addEntry(String word, int x, int freq, String y) throws RocksDBException
     {
         // Add a "docX Y" entry for the key "word" into hashtable
         // ADD YOUR CODES HERE
         byte[] content = db.get(word.getBytes());
         if (content == null) {
-            content = ("doc" + x + " " + y).getBytes();
+            content = ("doc" + x + " freq" + freq + " pos" + y).getBytes();
         } else {
-            content = (new String(content) + " doc" + x + " " + y).getBytes();
+            content = (new String(content) + " doc" + x + " freq" + freq + " pos" + y).getBytes();
         }
         db.put(word.getBytes(), content);
+    }
+//
+    public void addEntryDocs(String docID, String PageTitle, String cururl, int PageSize, String childLink, String words, String freq) throws RocksDBException{
+        byte[] content = db.get(docID.getBytes());
+        content = ("pageTitle" + PageTitle + " url" + cururl + " pageSize" + PageSize + " childLink" + childLink
+        + " words" + words + " frequencies" + freq).getBytes();
+        db.put(docID.getBytes(), content);
     }
     public void delEntry(String word) throws RocksDBException
     {
         // Delete the word and its list from the hashtable
         // ADD YOUR CODES HERE
         db.remove(word.getBytes());
+    }
+    public void delDoc(String docID) throws RocksDBException{
+        db.remove(docID.getBytes());
     }
     public void printAll() throws RocksDBException
     {
