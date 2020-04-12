@@ -13,6 +13,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
+
 import org.json.JSONObject;
 
 @WebServlet(urlPatterns = {"/GetUserQueryServlet"})
@@ -32,17 +34,19 @@ public class GetUserQueryServlet extends HttpServlet {
             words = crawler.extractWords();
             for(int i = 0; i< words.size(); i++){
                 String current_word = words.get(i).toLowerCase();
-//                System.out.println(current_word);
                 words.set(i,current_word);
-                if (stopStem.isStopWord(current_word)) {
-//                    System.out.println(words.get(i) +"It is a stop word, remove it");
+                if (current_word.equals("")){
+                    System.out.println("empty string");
                     words.remove(i);
                     i--;
-                }else {
+                    continue;
+                }
+                if (stopStem.isStopWord(current_word)) {
+                    words.remove(i);
+                    i--;
+                }else{
                     String new_word = stopStem.stem(current_word);
-//                    System.out.println(new_word);
                     words.set(i,new_word);
-//                    System.out.println("Replace original word with its stem");
                 }
             }
         } catch (ParserException e) {
