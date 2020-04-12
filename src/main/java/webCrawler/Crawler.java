@@ -1,12 +1,17 @@
 package webCrawler;
 
+import java.io.IOException;
 import java.util.Vector;
 import org.htmlparser.beans.StringBean;
 import org.htmlparser.util.ParserException;
 import java.util.StringTokenizer;
 import org.htmlparser.beans.LinkBean;
 import java.net.URL;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import java.util.HashMap;
 
 public class Crawler
 {
@@ -19,8 +24,16 @@ public class Crawler
     {
         return url;
     }
+    public String getPageTitle() throws IOException {
+    Document doc = Jsoup.connect(getUrl()).get();
+    Elements title = doc.select("title");
+    return title.text();
+    }
+    public int page_size()throws IOException {
+        Document doc = Jsoup.connect(getUrl()).get();
+        return doc.text().length();
+    }
     public Vector<String> extractWords() throws ParserException
-
     {
         // extract words in url and return them
         // use StringTokenizer to tokenize the result from StringBean
