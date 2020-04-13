@@ -162,7 +162,7 @@ public class GetUserQueryServlet extends HttpServlet {
         }
         catch(RocksDBException e){
         }
-        
+
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
