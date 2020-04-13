@@ -29,6 +29,14 @@ public class Crawler
     Elements title = doc.select("title");
     return title.text();
     }
+    public String get_last_modified_time() throws IOException {
+        Document doc = Jsoup.connect(getUrl()).get();
+        Elements modified_time = doc.select("span.pull-right");
+        if (modified_time.text().isEmpty()){
+            return "N/A";
+        }
+        return modified_time.text();
+    }
     public int page_size()throws IOException {
         Document doc = Jsoup.connect(getUrl()).get();
         return doc.text().length();

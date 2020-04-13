@@ -14,6 +14,7 @@
             document.getElementById("search_page_size").innerText="";
             document.getElementById("search_links_list").innerText="";
             document.getElementById("search_words_list").innerText="";
+            document.getElementById("search_page_modified_time").innerText="";
         }
         function append_item_to_list(list_id, value, value2 = -1) {
             if (value2 != -1) {
@@ -45,6 +46,7 @@
                     var title = responseJson.page_title;
                     var size  = responseJson.page_size;
                     var page_url = responseJson.page_url;
+                    var page_last_modified_time = responseJson.page_last_modified_time;
                     clean_append_item();
                     for (i=0;i<words_key.length;i++){
                         append_item_to_list("search_words_list", words_key[i],words_count[i]);
@@ -55,6 +57,7 @@
                     append_item_to_id("search_page_title",title);
                     append_item_to_id("search_page_url",page_url);
                     append_item_to_id("search_page_size",size);
+                    append_item_to_id("search_page_modified_time",page_last_modified_time);
                     // $('#ajaxGetUserQueryServletResponse').text(responseText);
                 }
             });
@@ -83,6 +86,8 @@
     <h2 id="search_page_title"></h2>
     <h3>Page url</h3>
     <h2 id="search_page_url"></h2>
+    <h3>Page last modified time</h3>
+    <h2 id="search_page_modified_time"></h2>
     <h3>Page Size</h3>
     <h2 id="search_page_size"></h2>
     <h3>All the words</h3>
