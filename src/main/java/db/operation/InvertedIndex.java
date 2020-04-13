@@ -35,9 +35,9 @@ public class InvertedIndex
         db.put(word.getBytes(), content);
     }
 //
-    public void addEntryDocs(String docID, String PageTitle, String cururl, int PageSize, String childLink, String words, String freq) throws RocksDBException{
+    public void addEntryDocs(String docID, String PageTitle, String Modified_time, String cururl, int PageSize, String childLink, String words, String freq) throws RocksDBException{
         byte[] content = db.get(docID.getBytes());
-        content = ("pageTitle" + PageTitle + " url" + cururl + " pageSize" + PageSize + " childLink" + childLink
+        content = ("pageTitle" + PageTitle + " url" + cururl +"Last Modified time"+ Modified_time +" pageSize" + PageSize + " childLink" + childLink
         + " words" + words + " frequencies" + freq).getBytes();
         db.put(docID.getBytes(), content);
     }

@@ -110,12 +110,13 @@ public class GetUserQueryServlet extends HttpServlet {
         Vector<String> words_key = new Vector<String>();
         Vector<String> words_count = new Vector<String>();
         String page_title = crawler.getPageTitle();
+        String page_modified_time = crawler.get_last_modified_time();
         Integer page_size = crawler.page_size();
         try{
             //Open RocksDB library
             RocksDB.loadLibrary();
-            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
-            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
+            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
+            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
@@ -131,11 +132,12 @@ public class GetUserQueryServlet extends HttpServlet {
                 wordIndex.addEntry(curWord, 0, Integer.parseInt(curValue), curPostList);
 //                wordIndex.printAll();
             }
-            wordIndexDocs.addEntryDocs("0", page_title, web_url, page_size, links.toString(), words_key.toString(), words_count.toString());
+            wordIndexDocs.addEntryDocs("0", page_title, page_modified_time, web_url, page_size, links.toString(), words_key.toString(), words_count.toString());
             //wordIndexDocs.printAll();
             for(int i = 1; i <= 30; i ++){
                 Crawler newCrawler = new Crawler(links.get(i));
                 String curPageTitle = newCrawler.getPageTitle();
+                String curPageModified_time = newCrawler.get_last_modified_time();
                 int curPageSize = newCrawler.page_size();
                 Vector<String> curWords = returnWords(newCrawler);
                 Vector<String> curLinks = returnLinks(newCrawler);
@@ -155,12 +157,13 @@ public class GetUserQueryServlet extends HttpServlet {
                     curwords_count.addElement(curValue);
                     wordIndex.addEntry(curWord, i, Integer.parseInt(curValue), curPostList);
                 }
-                wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
+                wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, curPageModified_time,links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
 
             }
             wordIndexDocs.printAll();
         }
         catch(RocksDBException e){
+            System.out.println("pull up! stooooooopid");
         }
 
         response.setContentType("application/json");
@@ -174,6 +177,7 @@ public class GetUserQueryServlet extends HttpServlet {
         jsonResponse.put("page_url", web_url);
         jsonResponse.put("page_title", page_title );
         jsonResponse.put("page_size",page_size);
+        jsonResponse.put("page_last_modified_time", page_modified_time);
         /* send to the client the JSON string */
         response.getWriter().write(jsonResponse.toString());
     }
