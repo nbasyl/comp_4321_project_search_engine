@@ -115,6 +115,10 @@ public class GetUserQueryServlet extends HttpServlet {
         try{
             //Open RocksDB library
             RocksDB.loadLibrary();
+
+//            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
+//            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
+
             String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/words";
             String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/docs";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
@@ -145,8 +149,8 @@ public class GetUserQueryServlet extends HttpServlet {
                 Map<String ,String> curkey_words_freq= returnKeyAndFreq(curWords);
                 Vector<String> curwords_key = new Vector<String>();
                 Vector<String> curwords_count = new Vector<String>();
-                Iterator curhmIterator = key_words_freq.entrySet().iterator();
-                Iterator curposIterator = key_words_pos.entrySet().iterator();
+                Iterator curhmIterator = curkey_words_freq.entrySet().iterator();
+                Iterator curposIterator = curkey_words_pos.entrySet().iterator();
                 while(curhmIterator.hasNext()){
                     Map.Entry mapElementFreq = (Map.Entry)curhmIterator.next();
                     Map.Entry mapElementPos = (Map.Entry)curposIterator.next();
@@ -160,12 +164,13 @@ public class GetUserQueryServlet extends HttpServlet {
                 wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, curPageModified_time,links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
 
             }
-            wordIndexDocs.printAll();
+            //wordIndexDocs.printAll();
+            wordIndexDocs.writeToText();
         }
         catch(RocksDBException e){
             System.out.println("pull up! stooooooopid");
         }
-        
+
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
