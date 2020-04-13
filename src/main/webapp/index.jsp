@@ -67,21 +67,14 @@
 <body>
 
 <center>
-    <h2>Hello World</h2>
-    <h3>
-        <a href="hello?name=Eric">Click Here</a>
-    </h3>
-    <h2>Web Crawler Testing</h2>
-    <h3>
-        <a href="crawling">Start Crawling comp4321 Website</a>
-    </h3>
     <div>
+        <br>
     <form>
-        Enter a url to crawl: <input type="text" id="web_url" />
+        Enter a url to crawl and index: <input type="text" id="web_url" />
     </form> <br>
     <button id="submit" onclick="submit_url()">submit</button>
     </div>
-    <h2>Crawling result</h2>
+    <h2>Crawling result of the root page</h2>
     <h3>Title</h3>
     <h2 id="search_page_title"></h2>
     <h3>Page url</h3>
