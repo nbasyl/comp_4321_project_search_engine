@@ -145,8 +145,8 @@ public class GetUserQueryServlet extends HttpServlet {
                 Map<String ,String> curkey_words_freq= returnKeyAndFreq(curWords);
                 Vector<String> curwords_key = new Vector<String>();
                 Vector<String> curwords_count = new Vector<String>();
-                Iterator curhmIterator = key_words_freq.entrySet().iterator();
-                Iterator curposIterator = key_words_pos.entrySet().iterator();
+                Iterator curhmIterator = curkey_words_freq.entrySet().iterator();
+                Iterator curposIterator = curkey_words_pos.entrySet().iterator();
                 while(curhmIterator.hasNext()){
                     Map.Entry mapElementFreq = (Map.Entry)curhmIterator.next();
                     Map.Entry mapElementPos = (Map.Entry)curposIterator.next();
@@ -160,7 +160,8 @@ public class GetUserQueryServlet extends HttpServlet {
                 wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, curPageModified_time,links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
 
             }
-            wordIndexDocs.printAll();
+            //wordIndexDocs.printAll();
+            wordIndexDocs.writeToText();
         }
         catch(RocksDBException e){
             System.out.println("pull up! stooooooopid");

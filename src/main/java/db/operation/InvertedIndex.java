@@ -5,6 +5,9 @@ import org.rocksdb.Options;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 public class InvertedIndex
 {
@@ -37,7 +40,7 @@ public class InvertedIndex
 //
     public void addEntryDocs(String docID, String PageTitle, String Modified_time, String cururl, int PageSize, String childLink, String words, String freq) throws RocksDBException{
         byte[] content = db.get(docID.getBytes());
-        content = ("pageTitle" + PageTitle + " url" + cururl +"Last Modified time"+ Modified_time +" pageSize" + PageSize + " childLink" + childLink
+        content = ("pageTitle" + PageTitle + " url" + cururl +" LastModifiedTime"+ Modified_time +" pageSize" + PageSize + " childLink" + childLink
         + " words" + words + " frequencies" + freq).getBytes();
         db.put(docID.getBytes(), content);
     }
@@ -59,5 +62,40 @@ public class InvertedIndex
         for(iter.seekToFirst(); iter.isValid(); iter.next()) {
             System.out.println(new String(iter.key()) + "=" + new String(iter.value()));
         }
+    }
+    public void writeToText() throws RocksDBException, IOException {
+        FileWriter writer = new FileWriter("/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/txtFile/spider_result.txt", true);
+        RocksIterator iter = db.newIterator();
+        int flag = 0;
+        for(iter.seekToFirst(); iter.isValid(); iter.next()) {
+            if(flag == 1){
+                writer.write("-------------------------------------------------------------------------------------------\n");
+            }
+            flag = 1;
+            String currentDoc = new String(iter.value());
+            String pageTitle = currentDoc.substring(currentDoc.indexOf("pageTitle") + 9, currentDoc.indexOf("url") - 1);
+            String pageURL = currentDoc.substring(currentDoc.indexOf("url") + 3, currentDoc.indexOf("LastModifiedTime") - 1);
+            String modifiedTime = currentDoc.substring(currentDoc.indexOf("LastModifiedTime") + 16, currentDoc.indexOf("pageSize") - 1);
+            String pageSize = currentDoc.substring(currentDoc.indexOf("pageSize") + 8, currentDoc.indexOf("childLink") - 1);
+            String childLink = currentDoc.substring(currentDoc.indexOf("childLink") + 10, currentDoc.indexOf("words") - 2);
+            String words = currentDoc.substring(currentDoc.indexOf("words") + 6, currentDoc.indexOf("frequencies") - 2);
+            String freq = currentDoc.substring(currentDoc.indexOf("frequencies") + 12, currentDoc.length() - 1);
+            //System.out.println(freq);
+            String[] arrChildLink = childLink.split(", ");
+            String[] arrWords = words.split(",");
+            String[] arrFreq = freq.split(",");
+            writer.write(pageTitle + "\n");
+            writer.write(pageURL + "\n");
+            writer.write(modifiedTime+ ", " + pageSize + "\n");
+            for(int i = 0; i < arrWords.length; i ++){
+                writer.write(arrWords[i] + " " + arrFreq[i] + ";");
+            }
+            writer.write("\n");
+            for(int i = 0; i < arrChildLink.length; i ++){
+                writer.write(arrChildLink[i] + "\n");
+            }
+        }
+        writer.close();
+        System.out.println("Done!\n");
     }
 }
