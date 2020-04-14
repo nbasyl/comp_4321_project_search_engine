@@ -21,15 +21,15 @@ Follow a concise article written by SeanThePlug to set up the environment:
 
 Please also change the following value inside GetUserQueryServlet.java
 ```
-    String path = "ABSOLUTE_PATH/comp_4321_project/src/main/java/db/data/words";
-    String path2 = "ABSOLUTE_PATH/comp_4321_project/src/main/java/db/data/docs";
+    String path = "ABSOLUTE_PATH/comp_4321_project_search_engine/src/main/java/db/data/words";
+    String path2 = "ABSOLUTE_PATH/comp_4321_project_search_engine/src/main/java/db/data/docs";
 ```
 
 ![Alt text](readme_image/read_me_image.png?raw=true "Title")
 
 Also change the following path inside InvertedIndex.java 
 ```
-FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project/src/txtFile/spider_result.txt", true);
+FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project_search_engine/src/txtFile/spider_result.txt", true);
 ```
 ![Alt text](readme_image/read_me_image_2.png?raw=true "Title")
 
