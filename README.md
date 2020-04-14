@@ -35,6 +35,7 @@ FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project/src/txtFile/
 
 ## Running the tests
 
+* Before starting the test, you have to manually delete the content within the db/data/words and db/data/docs
 * Run the server and type in (https://www.cse.ust.hk/) to the textbox. 
 * Click submit and wait for the text file to generate.
-* find the spider_result.txt in the txt
+* find the spider_result.txt in the src/txtFile folder
