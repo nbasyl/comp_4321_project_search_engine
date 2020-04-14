@@ -19,7 +19,7 @@ The search engine was built using Java Maven project with spring framework
 Follow a concise article written by SeanThePlug to set up the environment:
 [links to article](https://medium.com/@seanliu_90343/how-to-set-up-a-tomcat-server-under-maven-project-structure-using-intellij-idea-macos-1475a975abf0)
 
-Please also change
+Please also change the following value inside GetUserQueryServlet.java
 ```
     String path = "ABSOLUTE_PATH/comp_4321_project/src/main/java/db/data/words";
     String path2 = "ABSOLUTE_PATH/comp_4321_project/src/main/java/db/data/docs";
@@ -27,7 +27,7 @@ Please also change
 
 ![Alt text](readme_image/read_me_image.png?raw=true "Title")
 
-Also change
+Also change the following path inside InvertedIndex.java 
 ```
 FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project/src/txtFile/spider_result.txt", true);
 ```
