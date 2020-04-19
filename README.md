@@ -33,9 +33,11 @@ FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project_search_engin
 ```
 ![Alt text](readme_image/read_me_image_2.png?raw=true "Title")
 
-## Running the tests
+## Running the tests for phase 1
 
 * Before starting the test, you have to manually delete the content within the db/data/words and db/data/docs
 * Run the server and type in (https://www.cse.ust.hk/) to the textbox. 
 * Click submit and wait for the text file to generate.
 * find the spider_result.txt in the src/txtFile folder
+
+## Running the tests for phase 2(under developed)
