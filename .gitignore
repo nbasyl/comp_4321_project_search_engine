@@ -2,4 +2,6 @@
 target
 src/main/java/db/data/docs/*
 src/main/java/db/data/words/*
+# Ignore Mac and Linux file system files
+*.swp
 .DS_Store
