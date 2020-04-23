@@ -64,7 +64,8 @@ public class InvertedIndex
         }
     }
     public void writeToText() throws RocksDBException, IOException {
-        FileWriter writer = new FileWriter("/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/txtFile/spider_result.txt", true);
+//        FileWriter writer = new FileWriter("/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/txtFile/spider_result.txt", true);
+        FileWriter writer = new FileWriter("/Users/seanliu/Desktop/comp_4321_project/src/txtFile/spider_result.txt", true);
         RocksIterator iter = db.newIterator();
         int flag = 0;
         for(iter.seekToFirst(); iter.isValid(); iter.next()) {
