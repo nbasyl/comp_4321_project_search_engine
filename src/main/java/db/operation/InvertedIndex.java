@@ -7,12 +7,19 @@ import org.rocksdb.RocksIterator;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Vector;
+
+import static java.lang.Integer.parseInt;
 
 
 public class InvertedIndex
 {
     private RocksDB db;
     private Options options;
+
+    public  RocksDB getDB() throws  RocksDBException{
+        return db;
+    }
 
     public InvertedIndex(String dbPath) throws RocksDBException
     {
@@ -23,6 +30,49 @@ public class InvertedIndex
 
         // creat and open the database
         this.db = RocksDB.open(options, dbPath);
+    }
+    protected int check_decimal (int number){
+        int i = 1;
+        while(number/10>0){
+            number = number/10;
+            i++;
+        }
+        return i;
+    }
+    protected int get_document_frequency(String word){
+        System.out.println(word);
+        int i = 0;
+        int term_freq = 0;
+        Vector<Integer> docs_id = new Vector<Integer>();
+        String current_doc_id = "doc"+Integer.toString(i);
+        try{
+        while(word.indexOf("doc")>=0){
+            if(word.indexOf(current_doc_id)>=0){
+                try {
+                    System.out.println(current_doc_id);
+                    word = word.substring(word.indexOf(current_doc_id) + (3+check_decimal(i)));
+                    System.out.println(word);
+                    term_freq++;
+                } catch (Exception e){
+                    System.out.println(e);
+                }
+            }
+            i++;
+            current_doc_id = "doc"+Integer.toString(i);
+        }} catch (Exception e){
+            System.out.println(e);
+        }
+        System.out.println(term_freq);
+        return term_freq;
+    }
+
+    public void addDocumentFreq(String word, InvertedIndex word_index) throws RocksDBException{
+        try {
+            byte[] content = String.valueOf(get_document_frequency(new String(word_index.getDB().get(word.getBytes())))).getBytes();
+            db.put(word.getBytes(), content);
+        }catch (RocksDBException r){
+            System.out.println(r);
+        }
     }
 
     public void addEntry(String word, int x, int freq, String y) throws RocksDBException

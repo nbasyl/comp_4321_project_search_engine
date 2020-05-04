@@ -62,6 +62,18 @@
                 }
             });
         }
+        function submit_query(){
+            $.ajax({
+                url : 'GetUserSearchQueryServlet',
+                data : {
+                    search_query : $('#search_query').val()
+                },
+                success : function(responseJson) {
+                    var success = responseJson.success_message;
+                    append_item_to_id("search_result_https", success);
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -90,6 +102,15 @@
     <h3>All the links</h3>
     <ul id="search_links_list">
     </ul>
+    <div>
+        <br>
+        <form>
+            Enter a search query to search through the index web page: <input type="text" id="search_query" />
+        </form> <br>
+        <button id="search" onclick="submit_query()">search</button>
+        <h2 id="search_result_https">
+        </h2>
+    </div>
 
 </center>
 </body>

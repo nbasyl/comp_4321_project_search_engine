@@ -5,6 +5,7 @@ import db.operation.InvertedIndex;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.htmlparser.util.ParserException;
+import org.rocksdb.RocksIterator;
 import webCrawler.Crawler;
 
 import java.io.FileWriter;
@@ -95,6 +96,7 @@ public class GetUserQueryServlet extends HttpServlet {
         }
         return key_words_pos;
     }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         System.out.println("in user crawling controller");
@@ -118,13 +120,14 @@ public class GetUserQueryServlet extends HttpServlet {
 
 //            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
 //            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
-
             String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/words";
             String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/docs";
+            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/terms_freq";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
             InvertedIndex wordIndexDocs = new InvertedIndex(path2);
+            InvertedIndex terms_freq = new InvertedIndex(path3);
             while (hmIterator.hasNext()){
                 Map.Entry mapElementFreq = (Map.Entry)hmIterator.next();
                 Map.Entry mapElementPos = (Map.Entry)posIterator.next();
@@ -134,7 +137,6 @@ public class GetUserQueryServlet extends HttpServlet {
                 words_key.addElement(curWord);
                 words_count.addElement(curValue);
                 wordIndex.addEntry(curWord, 0, Integer.parseInt(curValue), curPostList);
-//                wordIndex.printAll();
             }
             wordIndexDocs.addEntryDocs("0", page_title, page_modified_time, web_url, page_size, links.toString(), words_key.toString(), words_count.toString());
             //wordIndexDocs.printAll();
@@ -162,15 +164,24 @@ public class GetUserQueryServlet extends HttpServlet {
                     wordIndex.addEntry(curWord, i, Integer.parseInt(curValue), curPostList);
                 }
                 wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, curPageModified_time,links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
-
             }
             //wordIndexDocs.printAll();
             wordIndexDocs.writeToText();
+            // index term freq
+            RocksIterator iter = wordIndex.getDB().newIterator();
+            iter.seekToFirst();
+            while (iter.isValid()) {
+                String key = new String(iter.key());
+                System.out.println(key);
+                terms_freq.addDocumentFreq(key, wordIndex);
+                iter.next();
+            }
+            System.out.println("Finished!!");
         }
         catch(RocksDBException e){
             System.out.println("pull up! stooooooopid");
         }
-//test comment
+        //test comment
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
