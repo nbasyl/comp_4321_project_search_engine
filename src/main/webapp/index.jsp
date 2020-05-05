@@ -9,12 +9,15 @@
     <script src="https://code.jquery.com/jquery-1.10.2.js",type="text/javascript"></script>
     <script>
         function clean_append_item() {
-            document.getElementById("search_page_title").innerText="";
-            document.getElementById("search_page_url").innerText="";
-            document.getElementById("search_page_size").innerText="";
-            document.getElementById("search_links_list").innerText="";
-            document.getElementById("search_words_list").innerText="";
-            document.getElementById("search_page_modified_time").innerText="";
+            document.getElementById("index_page_title").innerText="";
+            document.getElementById("index_page_url").innerText="";
+            document.getElementById("index_page_size").innerText="";
+            document.getElementById("index_links_list").innerText="";
+            document.getElementById("index_words_list").innerText="";
+            document.getElementById("index_page_modified_time").innerText="";
+        }
+        function clean_search_result() {
+            document.getElementById("search_docs_list").innerText="";
         }
         function append_item_to_list(list_id, value, value2 = -1) {
             if (value2 != -1) {
@@ -49,15 +52,15 @@
                     var page_last_modified_time = responseJson.page_last_modified_time;
                     clean_append_item();
                     for (i=0;i<words_key.length;i++){
-                        append_item_to_list("search_words_list", words_key[i],words_count[i]);
+                        append_item_to_list("index_words_list", words_key[i],words_count[i]);
                     }
                     for (i=0;i<links.length;i++){
-                        append_item_to_list("search_links_list", links[i])
+                        append_item_to_list("index_links_list", links[i])
                     }
-                    append_item_to_id("search_page_title",title);
-                    append_item_to_id("search_page_url",page_url);
-                    append_item_to_id("search_page_size",size);
-                    append_item_to_id("search_page_modified_time",page_last_modified_time);
+                    append_item_to_id("index_page_title",title);
+                    append_item_to_id("index_page_url",page_url);
+                    append_item_to_id("index_page_size",size);
+                    append_item_to_id("index_page_modified_time",page_last_modified_time);
                     // $('#ajaxGetUserQueryServletResponse').text(responseText);
                 }
             });
@@ -70,7 +73,17 @@
                 },
                 success : function(responseJson) {
                     var success = responseJson.success_message;
-                    append_item_to_id("search_result_https", success);
+                    var docs_id = responseJson.docs_id;
+                    var docs_score = responseJson.docs_score;
+                    console.log(docs_id)
+                    console.log(docs_score)
+                    clean_search_result();
+                    for(i=0;i<docs_id.length;i++){
+                        var node = document.createElement("LI");
+                        var textnode = document.createTextNode(docs_id[i]+" score: "+docs_score[i]);
+                        node.appendChild(textnode);
+                        document.getElementById("search_docs_list").appendChild(node);
+                    }
                 }
             });
         }
@@ -88,19 +101,19 @@
     </div>
     <h2>Crawling result of the root page</h2>
     <h3>Title</h3>
-    <h2 id="search_page_title"></h2>
+    <h2 id="index_page_title"></h2>
     <h3>Page url</h3>
-    <h2 id="search_page_url"></h2>
+    <h2 id="index_page_url"></h2>
     <h3>Page last modified time</h3>
-    <h2 id="search_page_modified_time"></h2>
+    <h2 id="index_page_modified_time"></h2>
     <h3>Page Size</h3>
-    <h2 id="search_page_size"></h2>
+    <h2 id="index_page_size"></h2>
     <h3>All the words</h3>
-    <ul id="search_words_list">
+    <ul id="index_words_list">
     </ul>
     <br>
     <h3>All the links</h3>
-    <ul id="search_links_list">
+    <ul id="index_links_list">
     </ul>
     <div>
         <br>
@@ -110,6 +123,9 @@
         <button id="search" onclick="submit_query()">search</button>
         <h2 id="search_result_https">
         </h2>
+        <h3>Search Result</h3>
+        <ul id="search_docs_list">
+        </ul>
     </div>
 
 </center>
