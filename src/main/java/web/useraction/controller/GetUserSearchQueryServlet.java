@@ -213,6 +213,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
         return cosin_similarity_all_docs;
     }
 
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("in user search controller");
         StopStem stopStem = new StopStem();
@@ -257,7 +258,8 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                     .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                     .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
             System.out.println(reverseSortedMap);
-
+            Set<Integer> docs_id = reverseSortedMap.keySet();
+            System.out.println(docs_id);
         }
         catch(RocksDBException e){
             System.out.println(e);
