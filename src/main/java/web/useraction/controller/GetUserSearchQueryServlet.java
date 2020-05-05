@@ -213,6 +213,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
         return cosin_similarity_all_docs;
     }
 
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("in user search controller");
         StopStem stopStem = new StopStem();
@@ -247,7 +248,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
             System.out.println(all_rel_docs_term_weight.get(0));
             Map<Integer, Double> cosine_siml = new HashMap<Integer, Double>();
             cosine_siml = cosin_similarity_cal(all_rel_docs_term_weight,clean_words);
-            System.out.println(cosine_siml);
+//            System.out.println(cosine_siml);
 
             //LinkedHashMap preserve the ordering of elements in which they are inserted
             LinkedHashMap<Integer, Double> reverseSortedMap = new LinkedHashMap<>();
@@ -256,19 +257,27 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                     .stream()
                     .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                     .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
-            System.out.println(reverseSortedMap);
-
+//            System.out.println(reverseSortedMap);
+            Vector<Integer> docs_id = new Vector<Integer>(reverseSortedMap.keySet());
+            Vector<Double> docs_score = new Vector<Double>(reverseSortedMap.values());
+            System.out.println(docs_id);
+            System.out.println(docs_score);
+            //test comment
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            /* construct your json */
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("success_message", "success");
+            jsonResponse.put("docs_id", docs_id);
+            jsonResponse.put("docs_score", docs_score);
+            /* send to the client the JSON string */
+            response.getWriter().write(jsonResponse.toString());
+            wordIndex.getDB().close();
+            wordIndexDocs.getDB().close();
+            terms_freq.getDB().close();
         }
         catch(RocksDBException e){
             System.out.println(e);
         }
-        //test comment
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        /* construct your json */
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("success_message", "success");
-        /* send to the client the JSON string */
-        response.getWriter().write(jsonResponse.toString());
     }
 }
