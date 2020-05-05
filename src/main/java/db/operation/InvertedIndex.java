@@ -16,11 +16,9 @@ public class InvertedIndex
 {
     private RocksDB db;
     private Options options;
-
     public  RocksDB getDB() throws  RocksDBException{
         return db;
     }
-
     public InvertedIndex(String dbPath) throws RocksDBException
     {
         // the Options class contains a set of configurable DB options
@@ -65,7 +63,6 @@ public class InvertedIndex
         System.out.println(term_freq);
         return term_freq;
     }
-
     public void addDocumentFreq(String word, InvertedIndex word_index) throws RocksDBException{
         try {
             byte[] content = String.valueOf(get_document_frequency(new String(word_index.getDB().get(word.getBytes())))).getBytes();
