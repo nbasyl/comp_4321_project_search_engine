@@ -216,6 +216,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("in user search controller");
+        System.out.println(getServletContext().getRealPath("/"));
         StopStem stopStem = new StopStem();
         Vector<String> words = new Vector<String>(Arrays.asList(request.getParameter("search_query").split(" ")));    ;
         Vector<String> clean_words = returnWords(stopStem, words);
@@ -224,9 +225,9 @@ public class GetUserSearchQueryServlet extends HttpServlet {
             RocksDB.loadLibrary();
 //            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
 //            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
-            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/words";
-            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/docs";
-            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/terms_freq";
+            String path = getServletContext().getRealPath("WEB-INF/classes/data/words");
+            String path2 = getServletContext().getRealPath("WEB-INF/classes/data/docs");
+            String path3 = getServletContext().getRealPath("WEB-INF/classes/data/terms_freq");
             InvertedIndex wordIndex = new InvertedIndex(path);
             InvertedIndex wordIndexDocs = new InvertedIndex(path2);
             InvertedIndex terms_freq = new InvertedIndex(path3);

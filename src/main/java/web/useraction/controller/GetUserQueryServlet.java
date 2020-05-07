@@ -120,9 +120,9 @@ public class GetUserQueryServlet extends HttpServlet {
 
 //            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
 //            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
-            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/words";
-            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/docs";
-            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/java/db/data/terms_freq";
+            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
+            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
+            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
