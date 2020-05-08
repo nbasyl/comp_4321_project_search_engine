@@ -80,8 +80,41 @@
                     clean_search_result();
                     for(i=0;i<docs_id.length;i++){
                         var node = document.createElement("LI");
+                        var button = document.createElement("button");
+                        button.textContent = "get similar pages";
+                        button.addEventListener("click", submit_similar_page_query);
+                        button.setAttribute("id",docs_id[i]);
                         var textnode = document.createTextNode(docs_id[i]+" score: "+docs_score[i]);
                         node.appendChild(textnode);
+                        node.appendChild(button);
+                        document.getElementById("search_docs_list").appendChild(node);
+                    }
+                }
+            });
+        }
+        function submit_similar_page_query(){
+            $.ajax({
+                url : 'GetUserSearchQueryServlet',
+                data : {
+                    page_id: this.id,
+                    search_query : $('#search_query').val()
+                },
+                success : function(responseJson) {
+                    var success = responseJson.success_message;
+                    var docs_id = responseJson.docs_id;
+                    var docs_score = responseJson.docs_score;
+                    console.log(docs_id)
+                    console.log(docs_score)
+                    clean_search_result();
+                    for(i=0;i<docs_id.length;i++) {
+                        var node = document.createElement("LI");
+                        var button = document.createElement("button");
+                        button.textContent = "get similar pages";
+                        button.addEventListener("click", submit_similar_page_query);
+                        button.setAttribute("id", docs_id[i]);
+                        var textnode = document.createTextNode(docs_id[i] + " score: " + docs_score[i]);
+                        node.appendChild(textnode);
+                        node.appendChild(button);
                         document.getElementById("search_docs_list").appendChild(node);
                     }
                 }
