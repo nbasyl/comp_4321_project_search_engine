@@ -212,14 +212,41 @@ public class GetUserSearchQueryServlet extends HttpServlet {
         }
         return cosin_similarity_all_docs;
     }
+    protected Vector<String> get_top_5_frequent_words_of_doc(Integer doc_id, InvertedIndex wordIndexDocs) throws RocksDBException {
+        Vector<String> get_top_5_frequent_words_doc = new Vector<String>();
+        try {
+            String currentDoc = new String(wordIndexDocs.getDB().get(String.valueOf(doc_id).getBytes()));
+            String words = currentDoc.substring(currentDoc.indexOf("words") + 6, currentDoc.indexOf("frequencies") - 2);
+            String freq = currentDoc.substring(currentDoc.indexOf("frequencies") + 12, currentDoc.length() - 1);
+            String[] arrWords = words.split(",");
+            String[] arrFreq = freq.split(",");
+            Map<String, Integer> doc_terms_sort = new HashMap<String, Integer>();
+            for(int i =0;i<arrWords.length;i++){
+                doc_terms_sort.put(arrWords[i].trim(),Integer.parseInt(arrFreq[i].trim()));
+            }
+            //LinkedHashMap preserve the ordering of elements in which they are inserted
+            LinkedHashMap<String, Integer> reverseSortedMapForTerm = new LinkedHashMap<>();
+            //Use Comparator.reverseOrder() for reverse ordering
+            doc_terms_sort.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .forEachOrdered(x -> reverseSortedMapForTerm.put(x.getKey(), x.getValue()));
+//            System.out.println(reverseSortedMap);
+            Vector<String> the_sorted_list = new Vector<String>(reverseSortedMapForTerm.keySet());
+            for(int j = 0;j<5; j++){
+                get_top_5_frequent_words_doc.addElement(the_sorted_list.get(j));
+            }
+            System.out.println(get_top_5_frequent_words_doc);
+            System.out.println(reverseSortedMapForTerm);
+        }catch (RocksDBException r){
+            System.out.println(r);
+        }
+        return get_top_5_frequent_words_doc;
+    }
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("in user search controller");
-        System.out.println(getServletContext().getRealPath("/"));
-        StopStem stopStem = new StopStem();
-        Vector<String> words = new Vector<String>(Arrays.asList(request.getParameter("search_query").split(" ")));    ;
-        Vector<String> clean_words = returnWords(stopStem, words);
         try{
             //Open RocksDB library
             RocksDB.loadLibrary();
@@ -231,6 +258,20 @@ public class GetUserSearchQueryServlet extends HttpServlet {
             InvertedIndex wordIndex = new InvertedIndex(path);
             InvertedIndex wordIndexDocs = new InvertedIndex(path2);
             InvertedIndex terms_freq = new InvertedIndex(path3);
+
+            // prepare for query
+            StopStem stopStem = new StopStem();
+            Vector<String> words = null;
+            if(request.getParameter("page_id")!=null){
+                int doc_id = Integer.parseInt(request.getParameter("page_id"));
+                System.out.println("Similar page id "+doc_id);
+                words = get_top_5_frequent_words_of_doc(doc_id, wordIndexDocs);
+            }else {
+                words = new Vector<String>(Arrays.asList(request.getParameter("search_query").split(" ")));
+            }
+            Vector<String> clean_words = returnWords(stopStem, words);
+
+            //start the searching
             Map<String ,Vector<Integer>> search_query_docs_result = cluster_key_words_docs_id(clean_words, wordIndex);
             Iterator map_iterator = search_query_docs_result.entrySet().iterator();
             Set<Integer> docs_id_set = new TreeSet<Integer>();
