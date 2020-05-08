@@ -312,6 +312,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
             jsonResponse.put("success_message", "success");
             jsonResponse.put("docs_id", docs_id);
             jsonResponse.put("docs_score", docs_score);
+            jsonResponse.put("clean_words", clean_words);
             /* send to the client the JSON string */
             response.getWriter().write(jsonResponse.toString());
             wordIndex.getDB().close();

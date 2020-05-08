@@ -17,7 +17,23 @@
             document.getElementById("index_page_modified_time").innerText="";
         }
         function clean_search_result() {
-            document.getElementById("search_docs_list").innerText="";
+            console.log("in cleaning search result");
+            var previous_search_query = document.getElementById("previous_search_query")
+            var current_search_query = document.getElementById("current_search_query")
+            previous_search_query.innerText = current_search_query.innerText;
+            current_search_query.innerText="";
+            var previous_serach_result = document.getElementById("search_previous_docs_list");
+            previous_serach_result.innerText="";
+            var current_search_result = document.getElementsByClassName("current_search_item");
+            if (current_search_result != null){
+                while (current_search_result.length) {
+                    console.log(current_search_result[0]);
+                    var node = current_search_result[0];
+                    node.classList.remove('current_search_item');
+                    previous_serach_result.appendChild(node);
+                }
+                document.getElementById("search_current_docs_list").innerText="";
+            }
         }
         function append_item_to_list(list_id, value, value2 = -1) {
             if (value2 != -1) {
@@ -73,10 +89,12 @@
                 },
                 success : function(responseJson) {
                     var success = responseJson.success_message;
+                    var queries = responseJson.clean_words;
+                    console.log(queries);
                     var docs_id = responseJson.docs_id;
+                    console.log(docs_id);
                     var docs_score = responseJson.docs_score;
-                    console.log(docs_id)
-                    console.log(docs_score)
+                    var queries_used = "Query used for the search:";
                     clean_search_result();
                     for(i=0;i<docs_id.length;i++){
                         var node = document.createElement("LI");
@@ -87,8 +105,13 @@
                         var textnode = document.createTextNode(docs_id[i]+" score: "+docs_score[i]);
                         node.appendChild(textnode);
                         node.appendChild(button);
-                        document.getElementById("search_docs_list").appendChild(node);
+                        node.setAttribute("class","current_search_item");
+                        document.getElementById("search_current_docs_list").appendChild(node);
                     }
+                    for(i=0;i<queries.length;i++){
+                        queries_used = queries_used+" "+queries[i];
+                    }
+                    document.getElementById("current_search_query").innerText = queries_used;
                 }
             });
         }
@@ -101,10 +124,12 @@
                 },
                 success : function(responseJson) {
                     var success = responseJson.success_message;
+                    var queries = responseJson.clean_words;
+                    console.log(queries);
                     var docs_id = responseJson.docs_id;
+                    console.log(docs_id);
                     var docs_score = responseJson.docs_score;
-                    console.log(docs_id)
-                    console.log(docs_score)
+                    var queries_used = "Query used for the search:";
                     clean_search_result();
                     for(i=0;i<docs_id.length;i++) {
                         var node = document.createElement("LI");
@@ -115,8 +140,13 @@
                         var textnode = document.createTextNode(docs_id[i] + " score: " + docs_score[i]);
                         node.appendChild(textnode);
                         node.appendChild(button);
-                        document.getElementById("search_docs_list").appendChild(node);
+                        node.setAttribute("class","current_search_item");
+                        document.getElementById("search_current_docs_list").appendChild(node);
                     }
+                    for(i=0;i<queries.length;i++){
+                        queries_used = queries_used+" "+queries[i];
+                    }
+                    document.getElementById("current_search_query").innerText = queries_used;
                 }
             });
         }
@@ -156,8 +186,13 @@
         <button id="search" onclick="submit_query()">search</button>
         <h2 id="search_result_https">
         </h2>
-        <h3>Search Result</h3>
-        <ul id="search_docs_list">
+        <h3>Current Search Result</h3>
+        <h4 id="current_search_query"></h4>
+        <ul id="search_current_docs_list">
+        </ul>
+        <h3>Previous Search Result</h3>
+        <h4 id="previous_search_query"></h4>
+        <ul id="search_previous_docs_list">
         </ul>
     </div>
 
