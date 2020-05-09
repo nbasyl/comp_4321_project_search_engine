@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.Map;
+import java.util.Collections;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -96,7 +97,48 @@ public class GetUserQueryServlet extends HttpServlet {
         }
         return key_words_pos;
     }
+    protected Vector<String> getPageTitleWords(Crawler crawler) throws IOException{
 
+        StopStem stopStem = new StopStem();
+        Vector<String> words = new Vector<String>();
+        String[] temp;
+//        System.out.println(temp1);
+        temp = crawler.getPageTitle().split(" ");
+//        System.out.println(temp);
+        Collections.addAll(words, temp);
+
+        for(int i = 0; i< words.size(); i++){
+
+//                String current_word = words[i].toLowerCase()
+            String current_word = words.get(i).toLowerCase();
+            words.set(i,current_word);
+            if (current_word.equals("")){
+                System.out.println("empty string");
+                words.remove(i);
+                i--;
+                continue;
+            }
+            if (stopStem.isStopWord(current_word)) {
+                words.remove(i);
+                i--;
+            }else{
+                String new_word = stopStem.stem(current_word);
+                words.set(i,new_word);
+            }
+        }
+//        } catch (ParserException e) {
+//            e.printStackTrace();
+//        }
+        return words;
+    }
+    protected Vector<String> add2Gram(Vector <String> words){
+        Vector<String> gram2Words = new Vector<String>();
+        gram2Words.addAll(words);
+        for(int i = 0; i < words.size()-1; i++){
+            gram2Words.addElement(words.get(i)+ " " + words.get(i+1));
+        }
+        return gram2Words;
+    }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         System.out.println("in user crawling controller");
@@ -107,10 +149,19 @@ public class GetUserQueryServlet extends HttpServlet {
         Crawler crawler = new Crawler(web_url);
         Vector<String> words = returnWords(crawler);
         Vector<String> links = returnLinks(crawler);
+        words = add2Gram(words);
+
+        Vector<String> title_words = getPageTitleWords(crawler);
+        title_words = add2Gram(title_words);
+//        System.out.println(title_words.toString());
         Map<String, String> key_words_pos = returnKeyandPos(words);
         Map<String ,String> key_words_freq= returnKeyAndFreq(words);
+        Map<String, String> title_words_freq = returnKeyAndFreq(title_words);
+//        Map<String, String>
         Vector<String> words_key = new Vector<String>();
         Vector<String> words_count = new Vector<String>();
+        Vector<String> title_key = new Vector<String>();
+        Vector<String> title_count = new Vector<String>();
         String page_title = crawler.getPageTitle();
         String page_modified_time = crawler.get_last_modified_time();
         Integer page_size = crawler.page_size();
@@ -118,11 +169,13 @@ public class GetUserQueryServlet extends HttpServlet {
             //Open RocksDB library
             RocksDB.loadLibrary();
 
-//            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/docs";
-//            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/java/db/data/words";
-            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
-            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
-            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
+            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
+            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
+            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
+            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
+//            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
+//            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
+//            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
@@ -139,18 +192,39 @@ public class GetUserQueryServlet extends HttpServlet {
                 wordIndex.addEntry(curWord, 0, Integer.parseInt(curValue), curPostList);
             }
             wordIndexDocs.addEntryDocs("0", page_title, page_modified_time, web_url, page_size, links.toString(), words_key.toString(), words_count.toString());
+            Iterator titleIterator = title_words_freq.entrySet().iterator();
+            InvertedIndex titleIndexDocs = new InvertedIndex(path4);
+            while(titleIterator.hasNext()){
+                Map.Entry mapElementTFreq = (Map.Entry)titleIterator.next();
+                String curTitleWord = (String)mapElementTFreq.getKey();
+                String curTitleValue = (String)mapElementTFreq.getValue();
+                title_key.addElement(curTitleWord);
+                title_count.addElement(curTitleValue);
+            }
+            titleIndexDocs.addTitleDocs("0", title_key.toString(), title_count.toString());
+
+
+
+
             //wordIndexDocs.printAll();
-            for(int i = 1; i <= 30; i ++){
+            // change it to recursive retrieval
+            for(int i = 1; i <= 5; i ++){
                 Crawler newCrawler = new Crawler(links.get(i));
                 String curPageTitle = newCrawler.getPageTitle();
                 String curPageModified_time = newCrawler.get_last_modified_time();
                 int curPageSize = newCrawler.page_size();
                 Vector<String> curWords = returnWords(newCrawler);
+                curWords = add2Gram(curWords);
                 Vector<String> curLinks = returnLinks(newCrawler);
+                Vector<String> curtitle_words = getPageTitleWords(newCrawler);
+                curtitle_words = add2Gram(curtitle_words);
                 Map<String, String> curkey_words_pos = returnKeyandPos(curWords);
                 Map<String ,String> curkey_words_freq= returnKeyAndFreq(curWords);
+                Map<String, String> curtitle_words_freq = returnKeyAndFreq(curtitle_words);
                 Vector<String> curwords_key = new Vector<String>();
                 Vector<String> curwords_count = new Vector<String>();
+                Vector<String> curtitle_key = new Vector<String>();
+                Vector<String> curtitle_count = new Vector<String>();
                 Iterator curhmIterator = curkey_words_freq.entrySet().iterator();
                 Iterator curposIterator = curkey_words_pos.entrySet().iterator();
                 while(curhmIterator.hasNext()){
@@ -164,8 +238,18 @@ public class GetUserQueryServlet extends HttpServlet {
                     wordIndex.addEntry(curWord, i, Integer.parseInt(curValue), curPostList);
                 }
                 wordIndexDocs.addEntryDocs(String.valueOf(i), curPageTitle, curPageModified_time,links.get(i), curPageSize, curLinks.toString(), curwords_key.toString(), curwords_count.toString());
+
+                Iterator curtitleIterator = curtitle_words_freq.entrySet().iterator();
+                while(curtitleIterator.hasNext()){
+                    Map.Entry mapElementTFreq = (Map.Entry)curtitleIterator.next();
+                    String curTitleWord = (String)mapElementTFreq.getKey();
+                    String curTitleValue = (String)mapElementTFreq.getValue();
+                    curtitle_key.addElement(curTitleWord);
+                    curtitle_count.addElement(curTitleValue);
+                }
+                titleIndexDocs.addTitleDocs(String.valueOf(i), curtitle_key.toString(), curtitle_count.toString());
             }
-            //wordIndexDocs.printAll();
+            titleIndexDocs.printAll();
             wordIndexDocs.writeToText();
             // index term freq
             RocksIterator iter = wordIndex.getDB().newIterator();
