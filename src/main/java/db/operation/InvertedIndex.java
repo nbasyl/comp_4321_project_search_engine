@@ -91,6 +91,12 @@ public class InvertedIndex
         + " words" + words + " frequencies" + freq).getBytes();
         db.put(docID.getBytes(), content);
     }
+
+    public void addTitleDocs(String docID, String words, String freq) throws RocksDBException{
+//        byte[] content = db.get(docID.getBytes());
+        byte[] content = ("words" + words + " frequencies" + freq).getBytes();
+        db.put(docID.getBytes(), content);
+    }
     public void delEntry(String word) throws RocksDBException
     {
         // Delete the word and its list from the hashtable
