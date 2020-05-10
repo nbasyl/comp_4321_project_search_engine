@@ -146,6 +146,13 @@ public class GetUserQueryServlet extends HttpServlet {
         int numofPages = 30;
 
         String web_url = request.getParameter("web_url");
+        Map<String ,String> allLinks= new HashMap<String, String>();
+
+        allLinks.put(web_url, "exists");
+
+//        key_words_pos.put(current_word,Integer.toString(i));
+
+
         Crawler crawler = new Crawler(web_url);
         Vector<String> words = returnWords(crawler);
         Vector<String> links = returnLinks(crawler);
@@ -169,14 +176,14 @@ public class GetUserQueryServlet extends HttpServlet {
             //Open RocksDB library
             RocksDB.loadLibrary();
 
-//            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
-//            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
-//            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
-//            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
-            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
-            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
-            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
-            String path4 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/titles";
+            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
+            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
+            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
+            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
+//            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
+//            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
+//            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
+//            String path4 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/titles";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
@@ -204,12 +211,24 @@ public class GetUserQueryServlet extends HttpServlet {
             }
             titleIndexDocs.addTitleDocs("0", title_key.toString(), title_count.toString());
 
-
-
-
             //wordIndexDocs.printAll();
             // change it to recursive retrieval
-            for(int i = 1; i <= 30; i ++){
+            System.out.println(links.size());
+            int i = 0;
+            while(i < links.size()-1 && i < 1500){
+                i ++;
+                System.out.println(i);
+                System.out.println(links.size());
+                System.out.println(links.get(i));
+                if(!links.get(i).contains("www.cse.ust.hk")){
+                    System.out.println("skip");
+                    continue;
+                }
+                else if(allLinks.get(links.get(i))==null){
+                    allLinks.put(links.get(i), "exists");
+                }
+            //for(int i = 1; i < links.size(); i ++){
+//            for(int i = 1; i <= 30; i ++){
                 Crawler newCrawler = new Crawler(links.get(i));
                 String curPageTitle = newCrawler.getPageTitle();
                 String curPageModified_time = newCrawler.get_last_modified_time();
@@ -217,6 +236,24 @@ public class GetUserQueryServlet extends HttpServlet {
                 Vector<String> curWords = returnWords(newCrawler);
                 curWords = add2Gram(curWords);
                 Vector<String> curLinks = returnLinks(newCrawler);
+                for (int j = 0; j < curLinks.size(); j ++){
+                    String curlink = curLinks.get(j);
+                    if(!curlink.contains("https://www.cse.ust.hk") || curlink.contains("hkust_only")
+                            ||curlink.contains("Only") || curlink.contains("admin")
+                            ||curlink.contains("~") || curlink.contains(".pdf")
+                            ||curlink.contains(".png")||curlink.contains(".jpg")
+                            ||curlink.contains(".mp3") || curlink.contains(".doc")
+                            ||curlink.contains("internship") || curlink.contains("&amp")
+                            ||curlink.contains("muppala") || curlink.contains(".ppt")){
+//                        System.out.println("skip");
+                        continue;
+                    }
+                    if(allLinks.get(curlink)==null){
+                        allLinks.put(curlink, "exists");
+                        links.addElement(curlink);
+                    }
+//                    allLinks.put(current_word,Integer.toString(i));
+                }
                 Vector<String> curtitle_words = getPageTitleWords(newCrawler);
                 curtitle_words = add2Gram(curtitle_words);
                 Map<String, String> curkey_words_pos = returnKeyandPos(curWords);
@@ -251,7 +288,7 @@ public class GetUserQueryServlet extends HttpServlet {
                 titleIndexDocs.addTitleDocs(String.valueOf(i), curtitle_key.toString(), curtitle_count.toString());
             }
             titleIndexDocs.printAll();
-            wordIndexDocs.writeToText();
+//            wordIndexDocs.writeToText();
             // index term freq
             RocksIterator iter = wordIndex.getDB().newIterator();
             iter.seekToFirst();
