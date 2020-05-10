@@ -39,27 +39,40 @@ public class InvertedIndex
     }
     protected int get_document_frequency(String word){
         System.out.println(word);
-        int i = 0;
         int term_freq = 0;
-        Vector<Integer> docs_id = new Vector<Integer>();
-        String current_doc_id = "doc"+Integer.toString(i);
-        try{
         while(word.indexOf("doc")>=0){
-            if(word.indexOf(current_doc_id)>=0){
-                try {
-                    System.out.println(current_doc_id);
-                    word = word.substring(word.indexOf(current_doc_id) + (3+check_decimal(i)));
-                    System.out.println(word);
-                    term_freq++;
-                } catch (Exception e){
-                    System.out.println(e);
+            try {
+                String current_doc_id_test = word.substring(word.indexOf("doc"),word.indexOf(" "));
+                System.out.println("Doc exist: "+current_doc_id_test);
+                word = word.substring(word.indexOf(current_doc_id_test) + current_doc_id_test.length());
+                if(word.indexOf("doc")>=0){
+                    word = word.substring(word.indexOf("doc"));
                 }
+                term_freq++;
+//                        System.out.println(db_string_test);
+            } catch (Exception e){
+                System.out.println(e);
             }
-            i++;
-            current_doc_id = "doc"+Integer.toString(i);
-        }} catch (Exception e){
-            System.out.println(e);
         }
+//        Vector<Integer> docs_id = new Vector<Integer>();
+//        String current_doc_id = "doc"+Integer.toString(i);
+//        try{
+//        while(word.indexOf("doc")>=0){
+//            if(word.indexOf(current_doc_id)>=0){
+//                try {
+//                    System.out.println(current_doc_id);
+//                    word = word.substring(word.indexOf(current_doc_id) + (3+check_decimal(i)));
+//                    System.out.println(word);
+//                    term_freq++;
+//                } catch (Exception e){
+//                    System.out.println(e);
+//                }
+//            }
+//            i++;
+//            current_doc_id = "doc"+Integer.toString(i);
+//        }} catch (Exception e){
+//            System.out.println(e);
+//        }
         System.out.println(term_freq);
         return term_freq;
     }

@@ -169,18 +169,20 @@ public class GetUserQueryServlet extends HttpServlet {
             //Open RocksDB library
             RocksDB.loadLibrary();
 
-            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
-            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
-            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
-            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
-//            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
-//            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
-//            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
+//            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
+//            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
+//            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
+//            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
+            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
+            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
+            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
+            String path4 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/titles";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
             InvertedIndex wordIndexDocs = new InvertedIndex(path2);
             InvertedIndex terms_freq = new InvertedIndex(path3);
+            InvertedIndex titleIndexDocs = new InvertedIndex(path4);
             while (hmIterator.hasNext()){
                 Map.Entry mapElementFreq = (Map.Entry)hmIterator.next();
                 Map.Entry mapElementPos = (Map.Entry)posIterator.next();
@@ -193,7 +195,6 @@ public class GetUserQueryServlet extends HttpServlet {
             }
             wordIndexDocs.addEntryDocs("0", page_title, page_modified_time, web_url, page_size, links.toString(), words_key.toString(), words_count.toString());
             Iterator titleIterator = title_words_freq.entrySet().iterator();
-            InvertedIndex titleIndexDocs = new InvertedIndex(path4);
             while(titleIterator.hasNext()){
                 Map.Entry mapElementTFreq = (Map.Entry)titleIterator.next();
                 String curTitleWord = (String)mapElementTFreq.getKey();
@@ -208,7 +209,7 @@ public class GetUserQueryServlet extends HttpServlet {
 
             //wordIndexDocs.printAll();
             // change it to recursive retrieval
-            for(int i = 1; i <= 5; i ++){
+            for(int i = 1; i <= 30; i ++){
                 Crawler newCrawler = new Crawler(links.get(i));
                 String curPageTitle = newCrawler.getPageTitle();
                 String curPageModified_time = newCrawler.get_last_modified_time();
