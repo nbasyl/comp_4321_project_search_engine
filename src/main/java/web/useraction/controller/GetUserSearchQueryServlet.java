@@ -152,7 +152,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                 BigDecimal bd = new BigDecimal(term_weight).setScale(2, RoundingMode.HALF_UP);
                 double modified_term_w = bd.doubleValue();
 //                System.out.println("final term weight: "+String.valueOf(modified_term_w));
-                doc_terms_weight.put(arrWords[i], modified_term_w);
+                doc_terms_weight.put(arrWords[i].trim(), modified_term_w);
             }
         }catch (Exception e){
             System.out.println("terms_weight_calculation: "+e);
@@ -189,11 +189,22 @@ public class GetUserSearchQueryServlet extends HttpServlet {
 
     protected double cal_doc_query_sigma(Map<String,Double> doc_terms_w, Vector<String> query){
         double sum = 0;
+//        for(int i =0;i<query.size();i++){
+//            try {
+//                System.out.println(query.get(i)+" "+doc_terms_w.get(" " + query.get(i)));
+//                if(doc_terms_w.get(" " + query.get(i))!=null){
+//                    sum = sum + doc_terms_w.get(" " + query.get(i));
+//                }
+//            }catch (Exception e){
+//                System.out.println(doc_terms_w);
+//                System.out.println(e);
+//            }
+//        }
         for(int i =0;i<query.size();i++){
             try {
-                System.out.println(query.get(i)+" "+doc_terms_w.get(" " + query.get(i)));
-                if(doc_terms_w.get(" " + query.get(i))!=null){
-                    sum = sum + doc_terms_w.get(" " + query.get(i));
+//                System.out.println(query.get(i)+" "+doc_terms_w.get(query.get(i)));
+                if(doc_terms_w.get(query.get(i))!=null){
+                    sum = sum + doc_terms_w.get(query.get(i));
                 }
             }catch (Exception e){
                 System.out.println(doc_terms_w);
@@ -203,18 +214,44 @@ public class GetUserSearchQueryServlet extends HttpServlet {
         return sum;
     }
 
+    protected String[] get_words_from_page_title(int doc_id, InvertedIndex pageTitle) throws RocksDBException {
+        String currentTitle = new String(pageTitle.getDB().get(String.valueOf(doc_id).getBytes()));
+        String words = currentTitle.substring(currentTitle.indexOf("words") + 6, currentTitle.indexOf("frequencies") - 2);
+        //System.out.println(freq);
+        String[] arrWords = words.split(",");
+        return arrWords;
+    }
+
+    protected int cal_page_title_query_sigma(int doc_id, InvertedIndex pageTitle, Vector<String> query) throws RocksDBException {
+        int page_title_matched = 0;
+        Vector<String> page_title_terms = new Vector<String>(Arrays.asList(get_words_from_page_title(doc_id, pageTitle)));
+        for (int i = 0; i < page_title_terms.size(); i++){
+            page_title_terms.set(i, page_title_terms.get(i).trim());
+        }
+//        System.out.println("Query: "+query);
+//        System.out.println("Page title terms: "+page_title_terms);
+        for(int i =0;i<query.size();i++){
+            if(page_title_terms.contains(query.get(i))){
+                page_title_matched=1;
+            }
+        }
+//        System.out.println(page_title_matched);
+        return page_title_matched;
+    }
+
     protected double cal_query_sqrt_signma(Vector<String> query){
         return Math.sqrt(query.size());
     }
 
 
-    protected Map<Integer, Double> cosin_similarity_cal(Map<Integer,Map<String,Double>> all_rel_docs_term_w, Vector<String> query){
+    protected Map<Integer, Double> cosin_similarity_cal_and_page_title_matched(Map<Integer,Map<String,Double>> all_rel_docs_term_w, Vector<String> query, InvertedIndex pageTitle){
         Iterator map_iterator = all_rel_docs_term_w.entrySet().iterator();
         System.out.println(all_rel_docs_term_w);
         Map<Integer, Double> cosin_similarity_all_docs = new HashMap<Integer, Double>();
         double doc_query_sigma = 0;
         double doc_pow_2_sigma_sqrt = 0;
         double query_sqrt_sigma = 0;
+        double query_title_matches = 0;
         while (map_iterator.hasNext()){
             try {
                 Map.Entry mapDocsId = (Map.Entry) map_iterator.next();
@@ -225,6 +262,9 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                 System.out.println("doc_id "+mapDocsId.getKey());
                 try{
                 doc_query_sigma = cal_doc_query_sigma(doc_terms_weight,query);
+//                if(doc_query_sigma==0){
+//                    System.out.println(doc_terms_weight);
+//                }
                 System.out.println("doc_query_sigma "+doc_query_sigma);} catch (Exception e){
                     System.out.println("doc_query_sigma_in_cosine_cal");
                 }
@@ -243,6 +283,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                 double cosin_sim = doc_query_sigma/(doc_pow_2_sigma_sqrt*query_sqrt_sigma);
                 BigDecimal bd = new BigDecimal(cosin_sim).setScale(3, RoundingMode.HALF_UP);
                 double modified_cosin_sim = bd.doubleValue();
+                modified_cosin_sim = modified_cosin_sim+cal_page_title_query_sigma((Integer) mapDocsId.getKey(), pageTitle,query);
                 cosin_similarity_all_docs.put((Integer) mapDocsId.getKey(),modified_cosin_sim);
             }catch (Exception e){
                 System.out.println("cosine_similarity_cal: "+e);
@@ -332,7 +373,7 @@ public class GetUserSearchQueryServlet extends HttpServlet {
             System.out.println(docs_id_set);
             Map<Integer,Map<String,Double>> all_rel_docs_term_weight = docs_terms_matrix(docs_id_set,wordIndexDocs,terms_freq);
             Map<Integer, Double> cosine_siml = new HashMap<Integer, Double>();
-            cosine_siml = cosin_similarity_cal(all_rel_docs_term_weight,clean_words);
+            cosine_siml = cosin_similarity_cal_and_page_title_matched(all_rel_docs_term_weight,clean_words, pages_titles);
 //            System.out.println(cosine_siml);
 
             //LinkedHashMap preserve the ordering of elements in which they are inserted

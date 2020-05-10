@@ -109,7 +109,7 @@
                         document.getElementById("search_current_docs_list").appendChild(node);
                     }
                     for(i=0;i<queries.length;i++){
-                        queries_used = queries_used+" "+queries[i];
+                        queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
                     document.getElementById("current_search_query").innerText = queries_used;
                 }
@@ -144,7 +144,7 @@
                         document.getElementById("search_current_docs_list").appendChild(node);
                     }
                     for(i=0;i<queries.length;i++){
-                        queries_used = queries_used+" "+queries[i];
+                        queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
                     document.getElementById("current_search_query").innerText = queries_used;
                 }
