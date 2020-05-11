@@ -6,6 +6,76 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Spring 4 MVC - HelloWorld Index Page</title>
+    <style type="text/css">
+        .flex {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            /*row | row-reverse | column | column-reverse;*/
+            flex-direction: row;
+        }
+        h5{
+            padding: 0px;
+            margin: 0px;
+        }
+
+
+        .item {
+            background-color: white;
+            margin: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        .item_score {
+            padding: 15px;
+            background-color: white;
+            /*row | row-reverse | column | column-reverse;*/
+            flex-direction: column;
+        }
+
+        .content_flex {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            /*row | row-reverse | column | column-reverse;*/
+            flex-direction: column;
+        }
+        .item_links{
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            /*row | row-reverse | column | column-reverse;*/
+            flex-direction: column;
+        }
+
+        .item_overflow{
+            height: 300px;/*..very important if you want scroll bar...*/
+            overflow:auto; /*..will introduce scroll bar when needed..*/
+            padding: 20px;
+            width: 400px;
+            margin-right: 20px;
+            display: inline-block;
+            background-color: aliceblue;
+        }
+        .search_result_div{
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            /*row | row-reverse | column | column-reverse;*/
+            flex-direction: row;
+        }
+        .current_search_result_div{
+            flex: 1;
+            display: inline-block;
+            width: 50%;
+        }
+        .previous_search_result_div{
+            flex: 1;
+            display: inline-block;
+            width: 50%;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-1.10.2.js",type="text/javascript"></script>
     <script>
         function clean_append_item() {
@@ -108,47 +178,124 @@
                     for(i=0;i<docs_id.length;i++){
                         var node = document.createElement("LI");
 
+                        var container = document.createElement("div");
+                        container.setAttribute("class","flex");
+
                         var button = document.createElement("button");
                         button.textContent = "get similar pages";
                         button.addEventListener("click", submit_similar_page_query);
                         button.setAttribute("id",docs_id[i]);
-                        var texttitle = document.createTextNode("score: " + docs_score[i] + " " + page_title[i])
-                        var texturl = document.createTextNode(page_url[i])
-                        var modtime = document.createTextNode(modified_time[i])
-                        var pageSize = document.createTextNode(page_size[i])
-                        node.appendChild(texttitle);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(texturl);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(modtime);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(pageSize);
-                        node.appendChild(document.createElement("br"));
 
+                        var score_div = document.createElement("div");
+                        score_div.setAttribute("class","item_score");
+                        var score = document.createTextNode("score: " + docs_score[i]+" ");
+                        var score_node = document.createElement("h5");
+                        var score_sub_div = document.createElement("div");
+                        score_sub_div.setAttribute("class","item");
+                        score_node.appendChild(score);
+                        score_sub_div.appendChild(score_node);
+                        score_div.appendChild(score_sub_div);
+
+                        var content_div = document.createElement("div");
+                        content_div.setAttribute("class","content_flex");
+
+                        // big box
+                        container.appendChild(score_div);
+                        container.appendChild(content_div);
+                        // title content div
+                        var title_div = document.createElement("div");
+                        title_div.setAttribute("class","item_score");
+                        var title_node = document.createElement("h5");
+                        var texttitle = document.createTextNode("Page title: "+page_title[i]);
+                        title_node.appendChild(texttitle);
+                        title_div.appendChild(title_node);
+                        title_div.appendChild(button);
+                        content_div.appendChild(title_div);
+                        // url div
+                        var url_div = document.createElement("div");
+                        url_div.setAttribute("class","item");
+                        var pageUrl = document.createElement('a');
+                        var texturl = document.createTextNode(page_url[i])
+                        pageUrl.appendChild(texturl);
+                        pageUrl.href = page_url[i];
+                        pageUrl.setAttribute("target","_blank");
+                        url_div.appendChild(pageUrl);
+                        content_div.appendChild(url_div);
+
+                        // modified_time_div
+                        var modtime_div = document.createElement("div");
+                        modtime_div.setAttribute("class","item");
+                        var modtime = document.createTextNode("Modified time: "+modified_time[i]+" Page size: "+page_size[i]);
+                        var modtime_node = document.createElement("h5");
+                        modtime_node.appendChild(modtime);
+                        modtime_div.appendChild(modtime_node);
+                        content_div.appendChild(modtime_div);
+
+                        var words_div = document.createElement("div");
+                        words_div.setAttribute("class","item_links");
+                        var indexed_words = document.createElement("h5");
+                        indexed_words.appendChild(document.createTextNode("Index Keywords"));
+                        words_div.appendChild(indexed_words);
+                        var words_div_div = document.createElement("div");
+                        words_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < words[i].length; j++){
                             var curWord = document.createTextNode(words[i][j] + " " + freqs[i][j] + ";")
-                            node.appendChild(curWord)
+                            var curWord_node = document.createElement("h6");
+                            curWord_node.appendChild(curWord);
+                            var br = document.createElement("br");
+                            words_div_div.appendChild(curWord);
+                            words_div_div.appendChild(br);
                         }
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(document.createTextNode("Parent Links"))
-                        node.appendChild(document.createElement("br"));
+                        words_div.appendChild(words_div_div);
+                        content_div.appendChild(words_div);
+
+                        var parentLinks_div = document.createElement("div");
+                        parentLinks_div.setAttribute("class","item_links");
+                        var parent = document.createElement("h5");
+                        parent.appendChild(document.createTextNode("Parent Links"));
+                        parentLinks_div.appendChild(parent);
+                        var parentLinks_div_div = document.createElement("div");
+                        parentLinks_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < parentLink[i].length; j++){
                             var curLink = document.createTextNode(parentLink[i][j]);
-                            node.appendChild(curLink);
-                            node.appendChild(document.createElement("br"));
+                            var parentUrl = document.createElement('a');
+                            parentUrl.appendChild(curLink);
+                            parentUrl.href = parentLink[i][j];
+                            parentUrl.setAttribute("target","_blank");
+                            var br = document.createElement("br");
+                            parentLinks_div_div.appendChild(parentUrl);
+                            parentLinks_div_div.appendChild(br);
                         }
-                        node.appendChild(document.createTextNode("Child Links"))
-                        node.appendChild(document.createElement("br"));
+                        parentLinks_div.appendChild(parentLinks_div_div);
+                        content_div.appendChild(parentLinks_div);
+
+
+                        var childLinks_div = document.createElement("div");
+                        childLinks_div.setAttribute("class","item_links");
+                        var child = document.createElement("h5");
+                        child.appendChild(document.createTextNode("Child Links"));
+                        childLinks_div.appendChild(child);
+                        var childLinks_div_div = document.createElement("div");
+                        childLinks_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < childLink[i].length; j++){
                             var curLink = document.createTextNode(childLink[i][j]);
-                            node.appendChild(curLink);
-                            node.appendChild(document.createElement("br"));
+                            var childUrl = document.createElement('a');
+                            childUrl.appendChild(curLink);
+                            childUrl.href = childLink[i][j];
+                            childUrl.setAttribute("target","_blank");
+                            var br = document.createElement("br");
+                            childLinks_div_div.appendChild(childUrl);
+                            childLinks_div_div.appendChild(br);
                         }
+                        childLinks_div.appendChild(childLinks_div_div);
+                        content_div.appendChild(childLinks_div);
 
-                        node.appendChild(button);
+                        node.appendChild(container);
                         node.setAttribute("class","current_search_item");
                         document.getElementById("search_current_docs_list").appendChild(node);
                     }
+
+
                     for(i=0;i<queries.length;i++){
                         queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
@@ -180,51 +327,128 @@
                     var docs_score = responseJson.docs_score;
                     var queries_used = "Query used for the search:";
                     clean_search_result();
-                    for(i=0;i<docs_id.length;i++) {
+
+                    for(i=0;i<docs_id.length;i++){
                         var node = document.createElement("LI");
+
+                        var container = document.createElement("div");
+                        container.setAttribute("class","flex");
+
                         var button = document.createElement("button");
                         button.textContent = "get similar pages";
                         button.addEventListener("click", submit_similar_page_query);
-                        button.setAttribute("id", docs_id[i]);
+                        button.setAttribute("id",docs_id[i]);
 
-                        var texttitle = document.createTextNode("score: " + docs_score[i] + " " + page_title[i])
+                        var score_div = document.createElement("div");
+                        score_div.setAttribute("class","item_score");
+                        var score = document.createTextNode("score: " + docs_score[i]+" ");
+                        var score_node = document.createElement("h5");
+                        var score_sub_div = document.createElement("div");
+                        score_sub_div.setAttribute("class","item");
+                        score_node.appendChild(score);
+                        score_sub_div.appendChild(score_node);
+                        score_div.appendChild(score_sub_div);
+
+                        var content_div = document.createElement("div");
+                        content_div.setAttribute("class","content_flex");
+
+                        // big box
+                        container.appendChild(score_div);
+                        container.appendChild(content_div);
+                        // title content div
+                        var title_div = document.createElement("div");
+                        title_div.setAttribute("class","item_score");
+                        var title_node = document.createElement("h5");
+                        var texttitle = document.createTextNode("Page title: "+page_title[i]);
+                        title_node.appendChild(texttitle);
+                        title_div.appendChild(title_node);
+                        title_div.appendChild(button);
+                        content_div.appendChild(title_div);
+                        // url div
+                        var url_div = document.createElement("div");
+                        url_div.setAttribute("class","item");
+                        var pageUrl = document.createElement('a');
                         var texturl = document.createTextNode(page_url[i])
-                        var modtime = document.createTextNode(modified_time[i])
-                        var pageSize = document.createTextNode(page_size[i])
-                        node.appendChild(texttitle);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(texturl);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(modtime);
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(pageSize);
-                        node.appendChild(document.createElement("br"));
+                        pageUrl.appendChild(texturl);
+                        pageUrl.href = page_url[i];
+                        pageUrl.setAttribute("target","_blank");
+                        url_div.appendChild(pageUrl);
+                        content_div.appendChild(url_div);
 
+                        // modified_time_div
+                        var modtime_div = document.createElement("div");
+                        modtime_div.setAttribute("class","item");
+                        var modtime = document.createTextNode("Modified time: "+modified_time[i]+" Page size: "+page_size[i]);
+                        var modtime_node = document.createElement("h5");
+                        modtime_node.appendChild(modtime);
+                        modtime_div.appendChild(modtime_node);
+                        content_div.appendChild(modtime_div);
+
+                        var words_div = document.createElement("div");
+                        words_div.setAttribute("class","item_links");
+                        var indexed_words = document.createElement("h5");
+                        indexed_words.appendChild(document.createTextNode("Index Keywords"));
+                        words_div.appendChild(indexed_words);
+                        var words_div_div = document.createElement("div");
+                        words_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < words[i].length; j++){
                             var curWord = document.createTextNode(words[i][j] + " " + freqs[i][j] + ";")
-                            node.appendChild(curWord)
+                            var curWord_node = document.createElement("h6");
+                            curWord_node.appendChild(curWord);
+                            var br = document.createElement("br");
+                            words_div_div.appendChild(curWord);
+                            words_div_div.appendChild(br);
                         }
-                        node.appendChild(document.createElement("br"));
-                        node.appendChild(document.createTextNode("Parent Links"))
-                        node.appendChild(document.createElement("br"));
+                        words_div.appendChild(words_div_div);
+                        content_div.appendChild(words_div);
+
+                        var parentLinks_div = document.createElement("div");
+                        parentLinks_div.setAttribute("class","item_links");
+                        var parent = document.createElement("h5");
+                        parent.appendChild(document.createTextNode("Parent Links"));
+                        parentLinks_div.appendChild(parent);
+                        var parentLinks_div_div = document.createElement("div");
+                        parentLinks_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < parentLink[i].length; j++){
                             var curLink = document.createTextNode(parentLink[i][j]);
-                            node.appendChild(curLink);
-                            node.appendChild(document.createElement("br"));
+                            var parentUrl = document.createElement('a');
+                            parentUrl.appendChild(curLink);
+                            parentUrl.href = parentLink[i][j];
+                            parentUrl.setAttribute("target","_blank");
+                            var br = document.createElement("br");
+                            parentLinks_div_div.appendChild(parentUrl);
+                            parentLinks_div_div.appendChild(br);
                         }
-                        node.appendChild(document.createTextNode("Child Links"))
-                        node.appendChild(document.createElement("br"));
+                        parentLinks_div.appendChild(parentLinks_div_div);
+                        content_div.appendChild(parentLinks_div);
+
+
+                        var childLinks_div = document.createElement("div");
+                        childLinks_div.setAttribute("class","item_links");
+                        var child = document.createElement("h5");
+                        child.appendChild(document.createTextNode("Child Links"));
+                        childLinks_div.appendChild(child);
+                        var childLinks_div_div = document.createElement("div");
+                        childLinks_div_div.setAttribute("class","item_overflow");
                         for(j = 0; j < childLink[i].length; j++){
                             var curLink = document.createTextNode(childLink[i][j]);
-                            node.appendChild(curLink);
-                            node.appendChild(document.createElement("br"));
+                            var childUrl = document.createElement('a');
+                            childUrl.appendChild(curLink);
+                            childUrl.href = childLink[i][j];
+                            childUrl.setAttribute("target","_blank");
+                            var br = document.createElement("br");
+                            childLinks_div_div.appendChild(childUrl);
+                            childLinks_div_div.appendChild(br);
                         }
+                        childLinks_div.appendChild(childLinks_div_div);
+                        content_div.appendChild(childLinks_div);
 
-
-                        node.appendChild(button);
+                        node.appendChild(container);
                         node.setAttribute("class","current_search_item");
                         document.getElementById("search_current_docs_list").appendChild(node);
                     }
+
+
                     for(i=0;i<queries.length;i++){
                         queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
@@ -236,7 +460,6 @@
 </head>
 <body>
 
-<center>
     <div>
         <br>
     <form>
@@ -244,40 +467,34 @@
     </form> <br>
     <button id="submit" onclick="submit_url()">submit</button>
     </div>
-    <h2>Crawling result of the root page</h2>
-    <h3>Title</h3>
-    <h2 id="index_page_title"></h2>
-    <h3>Page url</h3>
-    <h2 id="index_page_url"></h2>
-    <h3>Page last modified time</h3>
-    <h2 id="index_page_modified_time"></h2>
-    <h3>Page Size</h3>
-    <h2 id="index_page_size"></h2>
-    <h3>All the words</h3>
-    <ul id="index_words_list">
-    </ul>
-    <br>
-    <h3>All the links</h3>
-    <ul id="index_links_list">
-    </ul>
+
     <div>
         <br>
+        <center>
         <form>
             Enter a search query to search through the index web page: <input type="text" id="search_query" />
         </form> <br>
         <button id="search" onclick="submit_query()">search</button>
-        <h2 id="search_result_https">
-        </h2>
-        <h3>Current Search Result</h3>
-        <h4 id="current_search_query"></h4>
-        <ul id="search_current_docs_list">
-        </ul>
-        <h3>Previous Search Result</h3>
-        <h4 id="previous_search_query"></h4>
-        <ul id="search_previous_docs_list">
-        </ul>
-    </div>
+        </center>
 
-</center>
+        <div class="search_result_div">
+            <div class="current_search_result_div">
+                <center>
+                <h3>Current Search Result</h3>
+                <h4 id="current_search_query"></h4>
+                </center>
+                <ul id="search_current_docs_list">
+                </ul>
+            </div>
+            <div class="previous_search_result_div">
+                <center>
+                <h3>Previous Search Result</h3>
+                <h4 id="previous_search_query"></h4>
+                </center>
+                <ul id="search_previous_docs_list">
+                </ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

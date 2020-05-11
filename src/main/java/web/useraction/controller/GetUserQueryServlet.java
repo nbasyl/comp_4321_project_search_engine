@@ -176,14 +176,14 @@ public class GetUserQueryServlet extends HttpServlet {
             //Open RocksDB library
             RocksDB.loadLibrary();
 
-            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
-            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
-            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
-            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
-//            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
-//            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
-//            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
-//            String path4 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/titles";
+//            String path = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/words";
+//            String path2 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/docs";
+//            String path3 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/terms_freq";
+//            String path4 = "/Users/tayingcheng/Desktop/2019-2020Spring/Comp4321/project/comp_4321_project_search_engine/src/main/resources/data/titles";
+            String path = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/words";
+            String path2 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/docs";
+            String path3 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/terms_freq";
+            String path4 = "/Users/seanliu/Desktop/comp_4321_project/src/main/resources/data/titles";
             Iterator hmIterator = key_words_freq.entrySet().iterator();
             Iterator posIterator = key_words_pos.entrySet().iterator();
             InvertedIndex wordIndex = new InvertedIndex(path);
