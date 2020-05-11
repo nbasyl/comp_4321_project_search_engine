@@ -215,16 +215,17 @@ public class GetUserQueryServlet extends HttpServlet {
             // change it to recursive retrieval
             System.out.println(links.size());
             int i = 0;
-            while(i < links.size()-1 && i < 1500){
+            while(i < links.size()-1 && i < 50){
                 i ++;
                 System.out.println(i);
                 System.out.println(links.size());
                 System.out.println(links.get(i));
-                if(!links.get(i).contains("www.cse.ust.hk")){
+                if(!links.get(i).contains("www.cse.ust.hk") || links.get(i).equals("https://www.cse.ust.hk/")
+                ||links.get(i).equals("https://www.cse.ust.hk#")  || links.get(i).equals("https://www.cse.ust.hk")){
                     System.out.println("skip");
                     continue;
                 }
-                else if(allLinks.get(links.get(i))==null){
+                else{
                     allLinks.put(links.get(i), "exists");
                 }
             //for(int i = 1; i < links.size(); i ++){
@@ -244,7 +245,8 @@ public class GetUserQueryServlet extends HttpServlet {
                             ||curlink.contains(".png")||curlink.contains(".jpg")
                             ||curlink.contains(".mp3") || curlink.contains(".doc")
                             ||curlink.contains("internship") || curlink.contains("&amp")
-                            ||curlink.contains("muppala") || curlink.contains(".ppt")){
+                            ||curlink.contains("muppala") || curlink.contains(".ppt")
+                            ||curlink.contains("#")){
 //                        System.out.println("skip");
                         continue;
                     }
