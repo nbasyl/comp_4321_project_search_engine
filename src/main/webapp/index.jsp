@@ -91,19 +91,60 @@
                     var success = responseJson.success_message;
                     var queries = responseJson.clean_words;
                     console.log(queries);
+                    var page_title = responseJson.pageTitle;
+                    var page_url = responseJson.pageUrl;
+                    var modified_time = responseJson.modTime;
+                    var page_size = responseJson.pageSize;
+                    var parentLink = responseJson.parentLinks;
+                    var childLink = responseJson.childLinks;
+                    var words = responseJson.words;
+                    var freqs = responseJson.freqs;
                     var docs_id = responseJson.docs_id;
                     console.log(docs_id);
                     var docs_score = responseJson.docs_score;
                     var queries_used = "Query used for the search:";
                     clean_search_result();
+
                     for(i=0;i<docs_id.length;i++){
                         var node = document.createElement("LI");
+
                         var button = document.createElement("button");
                         button.textContent = "get similar pages";
                         button.addEventListener("click", submit_similar_page_query);
                         button.setAttribute("id",docs_id[i]);
-                        var textnode = document.createTextNode(docs_id[i]+" score: "+docs_score[i]);
-                        node.appendChild(textnode);
+                        var texttitle = document.createTextNode("score: " + docs_score[i] + " " + page_title[i])
+                        var texturl = document.createTextNode(page_url[i])
+                        var modtime = document.createTextNode(modified_time[i])
+                        var pageSize = document.createTextNode(page_size[i])
+                        node.appendChild(texttitle);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(texturl);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(modtime);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(pageSize);
+                        node.appendChild(document.createElement("br"));
+
+                        for(j = 0; j < words[i].length; j++){
+                            var curWord = document.createTextNode(words[i][j] + " " + freqs[i][j] + ";")
+                            node.appendChild(curWord)
+                        }
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(document.createTextNode("Parent Links"))
+                        node.appendChild(document.createElement("br"));
+                        for(j = 0; j < parentLink[i].length; j++){
+                            var curLink = document.createTextNode(parentLink[i][j]);
+                            node.appendChild(curLink);
+                            node.appendChild(document.createElement("br"));
+                        }
+                        node.appendChild(document.createTextNode("Child Links"))
+                        node.appendChild(document.createElement("br"));
+                        for(j = 0; j < childLink[i].length; j++){
+                            var curLink = document.createTextNode(childLink[i][j]);
+                            node.appendChild(curLink);
+                            node.appendChild(document.createElement("br"));
+                        }
+
                         node.appendChild(button);
                         node.setAttribute("class","current_search_item");
                         document.getElementById("search_current_docs_list").appendChild(node);
@@ -126,6 +167,14 @@
                     var success = responseJson.success_message;
                     var queries = responseJson.clean_words;
                     console.log(queries);
+                    var page_title = responseJson.pageTitle;
+                    var page_url = responseJson.pageUrl;
+                    var modified_time = responseJson.modTime;
+                    var page_size = responseJson.pageSize;
+                    var parentLink = responseJson.parentLinks;
+                    var childLink = responseJson.childLinks;
+                    var words = responseJson.words;
+                    var freqs = responseJson.freqs;
                     var docs_id = responseJson.docs_id;
                     console.log(docs_id);
                     var docs_score = responseJson.docs_score;
@@ -137,8 +186,41 @@
                         button.textContent = "get similar pages";
                         button.addEventListener("click", submit_similar_page_query);
                         button.setAttribute("id", docs_id[i]);
-                        var textnode = document.createTextNode(docs_id[i] + " score: " + docs_score[i]);
-                        node.appendChild(textnode);
+
+                        var texttitle = document.createTextNode("score: " + docs_score[i] + " " + page_title[i])
+                        var texturl = document.createTextNode(page_url[i])
+                        var modtime = document.createTextNode(modified_time[i])
+                        var pageSize = document.createTextNode(page_size[i])
+                        node.appendChild(texttitle);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(texturl);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(modtime);
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(pageSize);
+                        node.appendChild(document.createElement("br"));
+
+                        for(j = 0; j < words[i].length; j++){
+                            var curWord = document.createTextNode(words[i][j] + " " + freqs[i][j] + ";")
+                            node.appendChild(curWord)
+                        }
+                        node.appendChild(document.createElement("br"));
+                        node.appendChild(document.createTextNode("Parent Links"))
+                        node.appendChild(document.createElement("br"));
+                        for(j = 0; j < parentLink[i].length; j++){
+                            var curLink = document.createTextNode(parentLink[i][j]);
+                            node.appendChild(curLink);
+                            node.appendChild(document.createElement("br"));
+                        }
+                        node.appendChild(document.createTextNode("Child Links"))
+                        node.appendChild(document.createElement("br"));
+                        for(j = 0; j < childLink[i].length; j++){
+                            var curLink = document.createTextNode(childLink[i][j]);
+                            node.appendChild(curLink);
+                            node.appendChild(document.createElement("br"));
+                        }
+
+
                         node.appendChild(button);
                         node.setAttribute("class","current_search_item");
                         document.getElementById("search_current_docs_list").appendChild(node);

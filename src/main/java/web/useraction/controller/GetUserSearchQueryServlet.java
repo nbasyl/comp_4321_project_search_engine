@@ -2,6 +2,7 @@ package web.useraction.controller;
 
 import db.operation.StopStem;
 import db.operation.InvertedIndex;
+import db.operation.pageDoc;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.htmlparser.util.ParserException;
@@ -384,15 +385,65 @@ public class GetUserSearchQueryServlet extends HttpServlet {
                     .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                     .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
 //            System.out.println(reverseSortedMap);
-            Vector<Integer> docs_id = new Vector<Integer>(reverseSortedMap.keySet());
-            Vector<Double> docs_score = new Vector<Double>(reverseSortedMap.values());
+            Vector<Integer> tempdocs_id = new Vector<Integer>(reverseSortedMap.keySet());
+            Vector<Double> tempdocs_score = new Vector<Double>(reverseSortedMap.values());
+            Vector<Integer> docs_id = new Vector<Integer>();
+            Vector<Double> docs_score = new Vector<Double>();
             System.out.println(docs_id);
             System.out.println(docs_score);
+            if(tempdocs_id.size() >=50){
+                for(int i = 0; i < 50; i ++){
+                    docs_id.addElement(tempdocs_id.get(i));
+                    docs_score.addElement(tempdocs_score.get(i));
+                }
+            }
+            else{
+                docs_id = tempdocs_id;
+                docs_score = tempdocs_score;
+            }
+//            wordIndexDocs.returnDoc(String.valueOf("1"));
+//            wordIndexDocs.returnDoc(String.valueOf("12"));
+//            wordIndexDocs.returnDoc(String.valueOf("38"));
+
+            // format the document
+            Vector<String> pageTitles = new Vector<String>();
+            Vector<String> pageurls = new Vector<String>();
+            Vector<String>  modifiedtimes = new Vector<String>();
+            Vector<String> pageSizes = new Vector<String>();
+            Vector<Vector<String>> parentLinkSet = new Vector<Vector<String>>();
+            Vector<Vector<String>> childLinkSets = new Vector<Vector<String>>();
+            Vector<Vector<String>> wordSets = new Vector<Vector<String>>();
+            Vector<Vector<String>> freqSets = new Vector<Vector<String>>();
+
+            for(int i = 0; i < docs_id.size(); i ++){
+                pageDoc newDoc = wordIndexDocs.returnDoc(String.valueOf(String.valueOf(docs_id.get(i))));
+//                System.out.println(newDoc.title);
+                pageTitles.addElement(newDoc.title);
+                pageurls.addElement(newDoc.url);
+                modifiedtimes.addElement(newDoc.modifiedTime);
+                pageSizes.addElement(newDoc.pageSize);
+                parentLinkSet.addElement(newDoc.parentLinks);
+                childLinkSets.addElement(newDoc.childLinks);
+                wordSets.addElement(newDoc.words);
+                freqSets.addElement(newDoc.frequencies);
+            }
+
+
             //test comment
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             /* construct your json */
             JSONObject jsonResponse = new JSONObject();
+
+//            System.out.println(newDoc.title);
+            jsonResponse.put("pageTitle", pageTitles);
+            jsonResponse.put("pageUrl", pageurls);
+            jsonResponse.put("modTime", modifiedtimes);
+            jsonResponse.put("pageSize", pageSizes);
+            jsonResponse.put("parentLinks", parentLinkSet);
+            jsonResponse.put("childLinks", childLinkSets);
+            jsonResponse.put("words", wordSets);
+            jsonResponse.put("freqs", freqSets);
             jsonResponse.put("success_message", "success");
             jsonResponse.put("docs_id", docs_id);
             jsonResponse.put("docs_score", docs_score);

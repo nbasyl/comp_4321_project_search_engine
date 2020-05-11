@@ -7,6 +7,7 @@ import org.rocksdb.RocksIterator;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import static java.lang.Integer.parseInt;
@@ -165,4 +166,58 @@ public class InvertedIndex
         writer.close();
         System.out.println("Done!\n");
     }
+    public pageDoc returnDoc(String docID) throws RocksDBException, IOException{
+        byte[] content = db.get(docID.getBytes());
+
+
+        String currentDoc = new String(content);
+//        System.out.println(currentDoc);
+        String pageTitle = currentDoc.substring(currentDoc.indexOf("pageTitle") + 9, currentDoc.indexOf("url") - 1);
+        String pageURL = currentDoc.substring(currentDoc.indexOf("url") + 3, currentDoc.indexOf("LastModifiedTime") - 1);
+        String modifiedTime = currentDoc.substring(currentDoc.indexOf("LastModifiedTime") + 16, currentDoc.indexOf("pageSize") - 1);
+        String pageSize = currentDoc.substring(currentDoc.indexOf("pageSize") + 8, currentDoc.indexOf("childLink") - 1);
+        String childLink = currentDoc.substring(currentDoc.indexOf("childLink") + 10, currentDoc.indexOf("words") - 2);
+        String words = currentDoc.substring(currentDoc.indexOf("words") + 6, currentDoc.indexOf("frequencies") - 2);
+        String freq = currentDoc.substring(currentDoc.indexOf("frequencies") + 12, currentDoc.length() - 1);
+        //System.out.println(freq);
+        String[] arrChildLink = childLink.split(", ");
+        Vector<String> vectorChildLink = new Vector<String>(Arrays.asList(arrChildLink));
+        String[] arrWords = words.split(",");
+        Vector<String> vectorwords = new Vector<String>(Arrays.asList(arrWords));
+        String[] arrFreq = freq.split(",");
+        Vector<String> vectorfreq = new Vector<String>(Arrays.asList(arrFreq));
+//            for(int i = 0; i < arrChildLink.length; i ++){
+//                System.out.println(arrChildLink[i]);
+//            }
+
+        RocksIterator iter = db.newIterator();
+
+        Vector<String> parentLinks = new Vector<String>();
+
+        for(iter.seekToFirst(); iter.isValid(); iter.next()) {
+
+            String PotParDoc = new String(iter.value());
+            String potParURL = PotParDoc.substring(PotParDoc.indexOf("url") + 3, PotParDoc.indexOf("LastModifiedTime") - 1);
+
+            String PotParLink = PotParDoc.substring(PotParDoc.indexOf("childLink") + 10, PotParDoc.indexOf("words") - 2);
+            String[] arrPotPar = PotParLink.split(", ");
+
+            for(int i = 0; i < arrPotPar.length; i++){
+                if(pageURL.equals(arrPotPar[i])){
+                    parentLinks.addElement(potParURL);
+                    break;
+                }
+            }
+        }
+//            System.out.println("Parent Links:");
+//            for(int i = 0; i < parentLinks.size(); i ++){
+//                System.out.println(parentLinks.get(i));
+//            }
+        pageDoc newdoc = new pageDoc(pageTitle, pageURL, modifiedTime, pageSize, parentLinks, vectorChildLink, vectorwords, vectorfreq);
+
+        return newdoc;
+
+    }
+
+
 }
