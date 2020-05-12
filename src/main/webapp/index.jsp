@@ -467,13 +467,13 @@
 </head>
 <body>
 
-<%--    <div>--%>
-<%--        <br>--%>
-<%--    <form>--%>
-<%--        Enter a url to crawl and index: <input type="text" id="web_url" />--%>
-<%--    </form> <br>--%>
-<%--    <button id="submit" onclick="submit_url()">submit</button>--%>
-<%--    </div>--%>
+    <div>
+        <br>
+    <form>
+        Enter a url to crawl and index: <input type="text" id="web_url" />
+    </form> <br>
+    <button id="submit" onclick="submit_url()">submit</button>
+    </div>
 
     <div>
         <br>
