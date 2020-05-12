@@ -40,4 +40,4 @@ FileWriter writer = new FileWriter("ABSOLUTE_PATH/comp_4321_project_search_engin
 * Click submit and wait for the text file to generate.
 * find the spider_result.txt in the src/txtFile folder
 
-## Running the tests for phase 2(under developed)
+## Running the tests for phase 2(please check the final report)
