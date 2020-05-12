@@ -18,7 +18,11 @@
             padding: 0px;
             margin: 0px;
         }
-
+        #loadingImage{
+            position: fixed; /* or absolute */
+            top: 50%;
+            left: 50%;
+        }
 
         .item {
             background-color: white;
@@ -97,7 +101,6 @@
             var current_search_result = document.getElementsByClassName("current_search_item");
             if (current_search_result != null){
                 while (current_search_result.length) {
-                    console.log(current_search_result[0]);
                     var node = current_search_result[0];
                     node.classList.remove('current_search_item');
                     previous_serach_result.appendChild(node);
@@ -152,6 +155,7 @@
             });
         }
         function submit_query(){
+            $("#loadingImage").show();
             $.ajax({
                 url : 'GetUserSearchQueryServlet',
                 data : {
@@ -300,10 +304,12 @@
                         queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
                     document.getElementById("current_search_query").innerText = queries_used;
+                    $('#loadingImage').hide();
                 }
             });
         }
         function submit_similar_page_query(){
+            $("#loadingImage").show();
             $.ajax({
                 url : 'GetUserSearchQueryServlet',
                 data : {
@@ -453,6 +459,7 @@
                         queries_used = queries_used+" "+""+"["+queries[i]+"]";
                     }
                     document.getElementById("current_search_query").innerText = queries_used;
+                    $('#loadingImage').hide();
                 }
             });
         }
@@ -460,13 +467,13 @@
 </head>
 <body>
 
-    <div>
-        <br>
-    <form>
-        Enter a url to crawl and index: <input type="text" id="web_url" />
-    </form> <br>
-    <button id="submit" onclick="submit_url()">submit</button>
-    </div>
+<%--    <div>--%>
+<%--        <br>--%>
+<%--    <form>--%>
+<%--        Enter a url to crawl and index: <input type="text" id="web_url" />--%>
+<%--    </form> <br>--%>
+<%--    <button id="submit" onclick="submit_url()">submit</button>--%>
+<%--    </div>--%>
 
     <div>
         <br>
@@ -476,7 +483,9 @@
         </form> <br>
         <button id="search" onclick="submit_query()">search</button>
         </center>
-
+        <div id="loadingImage" style="display:none">
+            <img src="http://preloaders.net/preloaders/287/Filling%20broken%20ring.gif" height="100px" width="100px">
+        </div>
         <div class="search_result_div">
             <div class="current_search_result_div">
                 <center>

@@ -215,7 +215,7 @@ public class GetUserQueryServlet extends HttpServlet {
             // change it to recursive retrieval
             System.out.println(links.size());
             int i = 0;
-            while(i < links.size()-1 && i < 50){
+            while(i < links.size()-1 && i < 800){
                 i ++;
                 System.out.println(i);
                 System.out.println(links.size());
