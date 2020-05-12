@@ -21,7 +21,7 @@
         #loadingImage{
             position: fixed; /* or absolute */
             top: 50%;
-            left: 50%;
+            left: 47%;
         }
 
         .item {
@@ -479,13 +479,16 @@
         <br>
         <center>
         <form>
-            Enter a search query to search through the index web page: <input type="text" id="search_query" />
+            Enter a search query to search through the index web page:
+            <input type="text" id="search_query" style="width: 200px"/>
         </form> <br>
         <button id="search" onclick="submit_query()">search</button>
         </center>
-        <div id="loadingImage" style="display:none">
-            <img src="http://preloaders.net/preloaders/287/Filling%20broken%20ring.gif" height="100px" width="100px">
-        </div>
+        <center>
+            <div id="loadingImage" style="display:none">
+                <img src="https://res.cloudinary.com/dj5t6aqhg/image/upload/v1589257641/loading_image_pr69um.gif" height="100px" width="100px">
+            </div>
+        </center>
         <div class="search_result_div">
             <div class="current_search_result_div">
                 <center>
