@@ -2,6 +2,8 @@
 target
 src/main/resources/data/docs/*
 src/main/resources/data/words/*
+src/main/resources/data/terms_freq/*
+src/main/resources/data/titles/*
 # Ignore Mac and Linux file system files
 *.swp
 .DS_Store
